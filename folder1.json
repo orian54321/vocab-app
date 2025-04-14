@@ -1,0 +1,53 @@
+[
+    {
+      "english": "the",
+      "hebrew": "ה",
+      "options": ["של", "את", "הוא", "ה"]
+    },
+    {
+      "english": "be",
+      "hebrew": "להיות",
+      "options": ["יש", "לעשות", "להיות", "לחשוב"]
+    },
+    {
+      "english": "and",
+      "hebrew": "ו",
+      "options": ["גם", "עם", "ו", "על"]
+    },
+    {
+      "english": "of",
+      "hebrew": "של",
+      "options": ["של", "את", "זה", "מה"]
+    },
+    {
+      "english": "a",
+      "hebrew": "איזה",
+      "options": ["אחד", "איזה", "כמה", "בלי"]
+    },
+    {
+      "english": "in",
+      "hebrew": "בתוך",
+      "options": ["על", "ליד", "מתחת", "בתוך"]
+    },
+    {
+      "english": "to",
+      "hebrew": "אל",
+      "options": ["על", "אל", "עם", "של"]
+    },
+    {
+      "english": "have",
+      "hebrew": "יש",
+      "options": ["יש", "להיות", "לעשות", "לקבל"]
+    },
+    {
+      "english": "it",
+      "hebrew": "זה",
+      "options": ["היא", "הוא", "הם", "זה"]
+    },
+    {
+      "english": "I",
+      "hebrew": "אני",
+      "options": ["אני", "אתה", "הוא", "היא"]
+    }
+  ]
+  
