@@ -33,12 +33,12 @@ document.addEventListener("DOMContentLoaded", () => {
     speechSynthesis.speak(utterance);
   };
 
-  // כפתור שמירה – נוסיף שמירה אמיתית בהמשך
+  // כפתור שמירה
   document.getElementById("save-btn").onclick = () => {
     alert("נשמור את המילה בהמשך.");
   };
 
-  // כפתור מילים שמורות – נוסיף בהמשך
+  // כפתור מילים שמורות
   document.getElementById("show-saved-btn").onclick = () => {
     alert("כאן תוצג רשימת מילים שמורות.");
   };
@@ -63,32 +63,41 @@ function loadWord() {
   wordObj.options.forEach(option => {
     const btn = document.createElement("button");
     btn.textContent = option;
-    btn.onclick = () => {
-      if (answeredCorrectly) return;
-
-      if (option === wordObj.correct) {
-        feedbackEl.textContent = "✅ נכון!";
-        answeredCorrectly = true;
-        showNextButton();
-      } else {
-        feedbackEl.textContent = "❌ טעות, נסה שוב.";
-      }
-    };
+    btn.onclick = () => checkAnswer(option);
     choicesEl.appendChild(btn);
   });
 }
 
+function checkAnswer(option) {
+  const wordObj = wordsList[currentWordIndex];
+  const feedbackEl = document.getElementById("feedback");
+
+  if (answeredCorrectly) return;
+
+  if (option === wordObj.correct) {
+    feedbackEl.textContent = "✅ נכון!";
+    answeredCorrectly = true;
+    showNextButton();
+  } else {
+    feedbackEl.textContent = "❌ טעות, נסה שוב.";
+  }
+}
+
 function showNextButton() {
   const feedbackEl = document.getElementById("feedback");
+
   const nextBtn = document.createElement("button");
   nextBtn.textContent = "הבא ➡️";
   nextBtn.style.marginTop = "10px";
   nextBtn.onclick = () => {
     currentWordIndex++;
     if (currentWordIndex >= wordsList.length) {
-      currentWordIndex = 0; // מתחילים מהתחלה (נשפר בהמשך)
       alert("הגעת לסוף הרשימה!");
+      currentWordIndex = 0;
     }
     loadWord();
   };
-  feedbackEl.appendChild(document.createElement("
+
+  feedbackEl.appendChild(document.createElement("br"));
+  feedbackEl.appendChild(nextBtn);
+}
