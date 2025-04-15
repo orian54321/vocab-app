@@ -20,13 +20,14 @@ const words = [
 ];
 
 let currentWordIndex = 0;
-let isCorrectAnswer = false;
+let correctSelected = false;
 
 const savedWords = JSON.parse(localStorage.getItem("savedWords")) || [];
 
 function showWord() {
+  correctSelected = false;
+
   const wordObj = words[currentWordIndex];
-  isCorrectAnswer = false;
 
   document.getElementById("english-word").innerText = wordObj.english;
   document.getElementById("sentence").innerText = wordObj.sentence.replace(wordObj.english, "_____");
@@ -53,17 +54,30 @@ function checkAnswer(selected, button) {
   if (selected === wordObj.correct) {
     feedback.innerText = "צדקת!";
     feedback.style.color = "green";
-    isCorrectAnswer = true;
+    correctSelected = true;
+
+    // כפתור "המשך" מופעל רק אחרי תשובה נכונה
     document.getElementById("next-button").disabled = false;
 
-    // מנטרל את כל הכפתורים כדי שלא ילחצו שוב
-    const allButtons = document.querySelectorAll(".option-button");
-    allButtons.forEach(btn => btn.disabled = true);
+    // מנטרל את כל הכפתורים
+    const buttons = document.querySelectorAll(".option-button");
+    buttons.forEach(btn => btn.disabled = true);
   } else {
     feedback.innerText = "טעית!";
     feedback.style.color = "red";
-    button.disabled = true; // מבטל את כפתור התשובה השגויה שנבחרה
+
+    // מבטל רק את הכפתור של התשובה השגויה
+    button.disabled = true;
   }
+}
+
+function goToNextWord() {
+  if (!correctSelected) {
+    alert("עליך לבחור את התשובה הנכונה לפני שתוכל להמשיך.");
+    return;
+  }
+  currentWordIndex = (currentWordIndex + 1) % words.length;
+  showWord();
 }
 
 function saveWord() {
@@ -79,20 +93,3 @@ function saveWord() {
 
 function speakWord() {
   const wordObj = words[currentWordIndex];
-  const utterance = new SpeechSynthesisUtterance(wordObj.english);
-  speechSynthesis.speak(utterance);
-}
-
-document.getElementById("next-button").addEventListener("click", () => {
-  if (isCorrectAnswer) {
-    currentWordIndex = (currentWordIndex + 1) % words.length;
-    showWord();
-  } else {
-    alert("עליך לבחור את התשובה הנכונה לפני שתוכל להמשיך.");
-  }
-});
-
-document.getElementById("save-button").addEventListener("click", saveWord);
-document.getElementById("speak-button").addEventListener("click", speakWord);
-
-showWord();
