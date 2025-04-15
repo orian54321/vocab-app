@@ -20,15 +20,16 @@ const words = [
 ];
 
 let currentWordIndex = 0;
-const savedWords = JSON.parse(localStorage.getItem("savedWords")) || [];
 let isCorrectAnswer = false;
+
+const savedWords = JSON.parse(localStorage.getItem("savedWords")) || [];
 
 function showWord() {
   const wordObj = words[currentWordIndex];
   isCorrectAnswer = false;
 
   document.getElementById("english-word").innerText = wordObj.english;
-  document.getElementById("sentence").innerText = wordObj.sentence;
+  document.getElementById("sentence").innerText = wordObj.sentence.replace(wordObj.english, "_____");
 
   const optionsContainer = document.getElementById("options-container");
   optionsContainer.innerHTML = "";
@@ -45,7 +46,7 @@ function showWord() {
   document.getElementById("next-button").disabled = true;
 }
 
-function checkAnswer(selected, buttonElement) {
+function checkAnswer(selected, button) {
   const wordObj = words[currentWordIndex];
   const feedback = document.getElementById("feedback");
 
@@ -54,10 +55,14 @@ function checkAnswer(selected, buttonElement) {
     feedback.style.color = "green";
     isCorrectAnswer = true;
     document.getElementById("next-button").disabled = false;
+
+    // מנטרל את כל הכפתורים כדי שלא ילחצו שוב
+    const allButtons = document.querySelectorAll(".option-button");
+    allButtons.forEach(btn => btn.disabled = true);
   } else {
     feedback.innerText = "טעית!";
     feedback.style.color = "red";
-    buttonElement.disabled = true; // מבטל את האפשרות ללחוץ שוב על אותה טעות
+    button.disabled = true; // מבטל את כפתור התשובה השגויה שנבחרה
   }
 }
 
@@ -79,9 +84,12 @@ function speakWord() {
 }
 
 document.getElementById("next-button").addEventListener("click", () => {
-  if (!isCorrectAnswer) return;
-  currentWordIndex = (currentWordIndex + 1) % words.length;
-  showWord();
+  if (isCorrectAnswer) {
+    currentWordIndex = (currentWordIndex + 1) % words.length;
+    showWord();
+  } else {
+    alert("עליך לבחור את התשובה הנכונה לפני שתוכל להמשיך.");
+  }
 });
 
 document.getElementById("save-button").addEventListener("click", saveWord);
