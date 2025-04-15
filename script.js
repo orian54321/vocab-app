@@ -1,68 +1,76 @@
-const wordElement = document.getElementById("english-word");
-const sentenceElement = document.getElementById("sentence");
-const optionsElement = document.getElementById("options");
-const feedbackElement = document.getElementById("feedback");
-const nextBtn = document.getElementById("next-btn");
-const speakBtn = document.getElementById("speak-btn");
-const saveBtn = document.getElementById("save-word-btn");
-
-let currentWord = {};
-let savedWords = JSON.parse(localStorage.getItem("savedWords") || "[]");
-
 const words = [
-    {
-        english: "apple",
-        hebrewOptions: ["בננה", "תפוח", "אגס", "שזיף"],
-        correct: "תפוח",
-        sentence: "I eat an ____ every morning."
-    },
-    {
-        english: "dog",
-        hebrewOptions: ["חתול", "ציפור", "כלב", "דג"],
-        correct: "כלב",
-        sentence: "My ____ loves to play with the ball."
-    }
+  {
+    english: "apple",
+    hebrewOptions: ["תפוח", "בננה", "חתול", "ספר"],
+    correct: "תפוח",
+    sentence: "I ate an _____ for breakfast."
+  },
+  {
+    english: "run",
+    hebrewOptions: ["לרוץ", "לאכול", "לישון", "לשבת"],
+    correct: "לרוץ",
+    sentence: "Every morning, I _____ in the park."
+  },
+  {
+    english: "book",
+    hebrewOptions: ["מיטה", "שולחן", "ספר", "מחשב"],
+    correct: "ספר",
+    sentence: "She read a great _____ last night."
+  }
 ];
 
-function loadWord() {
-    feedbackElement.textContent = "";
-    nextBtn.disabled = true;
-    optionsElement.innerHTML = "";
+let currentWordIndex = 0;
+const savedWords = JSON.parse(localStorage.getItem("savedWords")) || [];
 
-    const randomIndex = Math.floor(Math.random() * words.length);
-    currentWord = words[randomIndex];
-    wordElement.textContent = currentWord.english;
-    sentenceElement.textContent = currentWord.sentence.replace("____", "_____");
+function showWord() {
+  const wordObj = words[currentWordIndex];
+  document.getElementById("word").innerText = wordObj.english;
+  document.getElementById("sentence").innerText = wordObj.sentence.replace(wordObj.english, "_____");
 
-    currentWord.hebrewOptions.forEach(option => {
-        const btn = document.createElement("button");
-        btn.textContent = option;
-        btn.onclick = () => checkAnswer(option);
-        optionsElement.appendChild(btn);
-    });
+  const choicesDiv = document.getElementById("choices");
+  choicesDiv.innerHTML = "";
+
+  wordObj.hebrewOptions.forEach(option => {
+    const btn = document.createElement("button");
+    btn.innerText = option;
+    btn.onclick = () => checkAnswer(option);
+    choicesDiv.appendChild(btn);
+  });
+
+  document.getElementById("feedback").innerText = "";
 }
 
 function checkAnswer(selected) {
-    if (selected === currentWord.correct) {
-        feedbackElement.textContent = "✅ נכון!";
-        nextBtn.disabled = false;
-    } else {
-        feedbackElement.textContent = "❌ לא נכון, נסה שוב.";
-    }
+  const wordObj = words[currentWordIndex];
+  const feedback = document.getElementById("feedback");
+  if (selected === wordObj.correct) {
+    feedback.innerText = "נכון!";
+    feedback.style.color = "green";
+  } else {
+    feedback.innerText = "לא נכון";
+    feedback.style.color = "red";
+  }
+  setTimeout(() => {
+    currentWordIndex = (currentWordIndex + 1) % words.length;
+    showWord();
+  }, 1000);
 }
 
-nextBtn.onclick = loadWord;
+function saveWord() {
+  const wordObj = words[currentWordIndex];
+  if (!savedWords.includes(wordObj.english)) {
+    savedWords.push(wordObj.english);
+    localStorage.setItem("savedWords", JSON.stringify(savedWords));
+    alert("המילה נשמרה!");
+  } else {
+    alert("המילה כבר שמורה.");
+  }
+}
 
-speakBtn.onclick = () => {
-    const utterance = new SpeechSynthesisUtterance(currentWord.english);
-    speechSynthesis.speak(utterance);
-};
+function speakWord() {
+  const wordObj = words[currentWordIndex];
+  const utterance = new SpeechSynthesisUtterance(wordObj.english);
+  speechSynthesis.speak(utterance);
+}
 
-saveBtn.onclick = () => {
-    if (!savedWords.includes(currentWord.english)) {
-        savedWords.push(currentWord.english);
-        localStorage.setItem("savedWords", JSON.stringify(savedWords));
-    }
-};
-
-loadWord();
+showWord();
