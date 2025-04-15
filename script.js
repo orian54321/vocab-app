@@ -9,7 +9,6 @@ const saveBtn = document.getElementById("save-word-btn");
 let currentWord = {};
 let savedWords = JSON.parse(localStorage.getItem("savedWords") || "[]");
 
-// רשימת מילים לדוגמה בלבד
 const words = [
     {
         english: "apple",
@@ -32,7 +31,6 @@ function loadWord() {
 
     const randomIndex = Math.floor(Math.random() * words.length);
     currentWord = words[randomIndex];
-
     wordElement.textContent = currentWord.english;
     sentenceElement.textContent = currentWord.sentence.replace("____", "_____");
 
@@ -64,7 +62,6 @@ saveBtn.onclick = () => {
     if (!savedWords.includes(currentWord.english)) {
         savedWords.push(currentWord.english);
         localStorage.setItem("savedWords", JSON.stringify(savedWords));
-        alert("המילה נשמרה!");
     }
 };
 
