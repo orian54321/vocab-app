@@ -1,26 +1,21 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>אפליקציית לימוד מילים באנגלית</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>אפליקציית לימוד אוצר מילים</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <h1>אימון אוצר מילים באנגלית</h1>
-
-    <div id="word-container">
-        <h2 id="english-word">מילה תופיע כאן...</h2>
-        <button id="speak-btn">🔊 השמעה</button>
-        <p id="sentence"></p>
-
-        <div id="options"></div>
-        <p id="feedback"></p>
-
-        <button id="next-btn" disabled>מילה הבאה ➡️</button>
-        <button id="save-word-btn">📌 שמור מילה לתרגול</button>
-        <button onclick="window.location.href='saved.html'">📂 מעבר למילים שמורות</button>
+  <div class="container">
+    <h1>לימוד אוצר מילים באנגלית</h1>
+    <div id="question-container">
+      <p id="english-word">מילה באנגלית תופיע כאן</p>
+      <div id="options-container"></div>
+      <p id="feedback"></p>
+      <button id="next-button">המשך</button>
     </div>
-
-    <script src="script.js"></script>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
