@@ -2,35 +2,35 @@ body {
   font-family: Arial, sans-serif;
   direction: rtl;
   text-align: center;
-  background-color: #f9f9f9;
-  margin: 0;
   padding: 20px;
+  background-color: #f4f4f4;
 }
 
-.container {
-  max-width: 600px;
-  margin: auto;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px #ccc;
+.word {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
 }
 
-h1 {
-  color: #333;
-}
-
-#choices button {
-  display: block;
-  width: 100%;
-  margin: 10px 0;
-  padding: 10px;
-  font-size: 16px;
-}
-
-#buttons button, #folder-buttons button {
+.choices button {
   margin: 5px;
+  padding: 10px 20px;
+  font-size: 18px;
+}
+
+.sentence {
+  margin: 20px 0;
+  font-size: 20px;
+}
+
+.feedback {
+  margin-top: 10px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.buttons button {
+  margin: 10px 5px;
   padding: 10px 15px;
   font-size: 16px;
-  border-radius: 5px;
 }
