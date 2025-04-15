@@ -1,3 +1,4 @@
+// מילים בתיקיות לדוגמה
 const folders = {
   1: [
     {
@@ -19,8 +20,8 @@ const folders = {
       sentence: "She is reading a ______."
     }
   ],
-  2: [], // נוסיף תוכן בהמשך
-  3: []  // נוסיף תוכן בהמשך
+  2: [], // נוסיף בהמשך
+  3: []  // נוסיף בהמשך
 };
 
 let currentFolder = 1;
@@ -29,9 +30,19 @@ let currentWordIndex = 0;
 let answeredCorrectly = false;
 let savedWords = [];
 
+// טען שמירה קיימת אם קיימת
 document.addEventListener("DOMContentLoaded", () => {
-  const stored = localStorage.getItem("savedWords");
-  if (stored) savedWords = JSON.parse(stored);
+  const saved = localStorage.getItem("savedWords");
+  if (saved) savedWords = JSON.parse(saved);
+
+  const savedIndex = localStorage.getItem("currentIndex");
+  if (savedIndex) currentWordIndex = parseInt(savedIndex);
+
+  const savedFolder = localStorage.getItem("currentFolder");
+  if (savedFolder && folders[savedFolder]) {
+    currentFolder = parseInt(savedFolder);
+    wordsList = folders[currentFolder];
+  }
 
   loadWord();
 
@@ -50,6 +61,10 @@ function selectFolder(folderNumber) {
   currentFolder = folderNumber;
   wordsList = folders[currentFolder];
   currentWordIndex = 0;
+
+  localStorage.setItem("currentFolder", folderNumber);
+  localStorage.setItem("currentIndex", 0);
+
   loadWord();
 }
 
@@ -82,7 +97,6 @@ function showSavedWords() {
     savedWords.forEach((word, index) => {
       let wordObj = null;
 
-      // חיפוש המילה בכל התיקיות
       for (const folder of Object.values(folders)) {
         wordObj = folder.find(w => w.word === word);
         if (wordObj) break;
@@ -124,6 +138,8 @@ function nextWord() {
     alert("סיימת את כל המילים בתיקייה זו!");
     currentWordIndex = 0;
   }
+
+  localStorage.setItem("currentIndex", currentWordIndex);
   loadWord();
 }
 
