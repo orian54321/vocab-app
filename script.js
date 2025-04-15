@@ -21,44 +21,86 @@ const wordsList = [
 
 let currentWordIndex = 0;
 let answeredCorrectly = false;
-let savedWords = JSON.parse(localStorage.getItem("savedWords")) || [];
+let savedWords = [];
 
 document.addEventListener("DOMContentLoaded", () => {
+  const stored = localStorage.getItem("savedWords");
+  if (stored) savedWords = JSON.parse(stored);
+
   loadWord();
 
-  document.getElementById("speak-btn").addEventListener("click", () => {
-    const word = wordsList[currentWordIndex].word;
-    const utterance = new SpeechSynthesisUtterance(word);
-    utterance.lang = "en-US";
-    speechSynthesis.speak(utterance);
-  });
-
-  document.getElementById("save-btn").addEventListener("click", () => {
-    const word = wordsList[currentWordIndex].word;
-    if (!savedWords.includes(word)) {
-      savedWords.push(word);
-      localStorage.setItem("savedWords", JSON.stringify(savedWords));
-      alert(`המילה "${word}" נשמרה לרשימת מילים שמורות.`);
-    } else {
-      alert(`המילה "${word}" כבר קיימת ברשימת מילים שמורות.`);
-    }
-  });
-
+  document.getElementById("speak-btn").addEventListener("click", speakWord);
+  document.getElementById("save-btn").addEventListener("click", saveWord);
   document.getElementById("show-saved-btn").addEventListener("click", showSavedWords);
-
-  document.getElementById("next-btn").addEventListener("click", () => {
-    if (!answeredCorrectly) {
-      alert("עליך לבחור את התשובה הנכונה לפני שתוכל להמשיך.");
-      return;
-    }
-    currentWordIndex++;
-    if (currentWordIndex >= wordsList.length) {
-      alert("הגעת לסוף הרשימה!");
-      currentWordIndex = 0;
-    }
-    loadWord();
-  });
+  document.getElementById("next-btn").addEventListener("click", nextWord);
 });
+
+function speakWord() {
+  const word = wordsList[currentWordIndex].word;
+  const utterance = new SpeechSynthesisUtterance(word);
+  utterance.lang = "en-US";
+  speechSynthesis.speak(utterance);
+}
+
+function saveWord() {
+  const word = wordsList[currentWordIndex].word;
+  if (!savedWords.includes(word)) {
+    savedWords.push(word);
+    localStorage.setItem("savedWords", JSON.stringify(savedWords));
+    alert(`המילה "${word}" נשמרה לרשימת מילים שמורות.`);
+  } else {
+    alert(`המילה "${word}" כבר קיימת ברשימת מילים שמורות.`);
+  }
+}
+
+function showSavedWords() {
+  const container = document.getElementById("saved-words-container");
+  const list = document.getElementById("saved-words-list");
+  list.innerHTML = "";
+
+  if (savedWords.length === 0) {
+    list.innerHTML = "<li>אין מילים שמורות עדיין.</li>";
+  } else {
+    savedWords.forEach((word, index) => {
+      const wordObj = wordsList.find(w => w.word === word);
+      const translation = wordObj ? wordObj.correct : "";
+
+      const li = document.createElement("li");
+      li.textContent = `${word} - ${translation} `;
+
+      const removeBtn = document.createElement("button");
+      removeBtn.textContent = "❌ הסר";
+      removeBtn.addEventListener("click", () => {
+        savedWords.splice(index, 1);
+        localStorage.setItem("savedWords", JSON.stringify(savedWords));
+        showSavedWords();
+      });
+
+      li.appendChild(removeBtn);
+      list.appendChild(li);
+    });
+  }
+
+  container.classList.remove("hidden");
+}
+
+function closeSavedWords() {
+  document.getElementById("saved-words-container").classList.add("hidden");
+}
+
+function nextWord() {
+  if (!answeredCorrectly) {
+    alert("עליך לבחור תשובה נכונה קודם.");
+    return;
+  }
+
+  currentWordIndex++;
+  if (currentWordIndex >= wordsList.length) {
+    alert("סיימת את כל המילים! מתחילים מההתחלה.");
+    currentWordIndex = 0;
+  }
+  loadWord();
+}
 
 function loadWord() {
   const wordObj = wordsList[currentWordIndex];
@@ -85,33 +127,4 @@ function loadWord() {
     });
     choicesContainer.appendChild(btn);
   });
-}
-
-function showSavedWords() {
-  const list = document.getElementById("saved-words-list");
-  list.innerHTML = "";
-
-  if (savedWords.length === 0) {
-    list.innerHTML = "<li>אין מילים שמורות עדיין.</li>";
-  } else {
-    savedWords.forEach((word, index) => {
-      const li = document.createElement("li");
-      li.textContent = word + " ";
-      const removeBtn = document.createElement("button");
-      removeBtn.textContent = "❌ הסר";
-      removeBtn.addEventListener("click", () => {
-        savedWords.splice(index, 1);
-        localStorage.setItem("savedWords", JSON.stringify(savedWords));
-        showSavedWords(); // מרענן את הרשימה
-      });
-      li.appendChild(removeBtn);
-      list.appendChild(li);
-    });
-  }
-
-  document.getElementById("saved-words-container").classList.remove("hidden");
-}
-
-function closeSavedWords() {
-  document.getElementById("saved-words-container").classList.add("hidden");
 }
