@@ -1,50 +1,94 @@
-const wordData = {
-  word: "apple",
-  correct: "תפוח",
-  options: ["תפוח", "כיסא", "חלון", "חתול"],
-  sentence: "I eat an ______ every morning."
-};
+// רשימת מילים (תיקייה 1 לדוגמה)
+const wordsList = [
+  {
+    word: "apple",
+    correct: "תפוח",
+    options: ["תפוח", "כיסא", "חתול", "ספר"],
+    sentence: "I eat an ______ every morning."
+  },
+  {
+    word: "dog",
+    correct: "כלב",
+    options: ["חתול", "ילד", "כלב", "מים"],
+    sentence: "The ______ is barking loudly."
+  },
+  {
+    word: "book",
+    correct: "ספר",
+    options: ["מיטה", "ספר", "שולחן", "בית"],
+    sentence: "She is reading a ______."
+  }
+];
+
+let currentWordIndex = 0;
+let answeredCorrectly = false;
 
 document.addEventListener("DOMContentLoaded", () => {
+  loadWord();
+
+  // כפתור שמע
+  document.getElementById("speak-btn").onclick = () => {
+    const utterance = new SpeechSynthesisUtterance(wordsList[currentWordIndex].word);
+    utterance.lang = "en-US";
+    speechSynthesis.speak(utterance);
+  };
+
+  // כפתור שמירה – נוסיף שמירה אמיתית בהמשך
+  document.getElementById("save-btn").onclick = () => {
+    alert("נשמור את המילה בהמשך.");
+  };
+
+  // כפתור מילים שמורות – נוסיף בהמשך
+  document.getElementById("show-saved-btn").onclick = () => {
+    alert("כאן תוצג רשימת מילים שמורות.");
+  };
+});
+
+function loadWord() {
+  const wordObj = wordsList[currentWordIndex];
   const wordEl = document.getElementById("english-word");
   const choicesEl = document.getElementById("choices");
   const feedbackEl = document.getElementById("feedback");
   const sentenceEl = document.getElementById("sentence");
 
-  // הצגת מילה
-  wordEl.textContent = wordData.word;
+  answeredCorrectly = false;
 
-  // הצגת משפט
-  sentenceEl.textContent = wordData.sentence;
+  // ניקוי קודם
+  wordEl.textContent = wordObj.word;
+  sentenceEl.textContent = wordObj.sentence;
+  feedbackEl.textContent = "";
+  choicesEl.innerHTML = "";
 
-  // הצגת אפשרויות
-  wordData.options.forEach(option => {
+  // הצגת תשובות
+  wordObj.options.forEach(option => {
     const btn = document.createElement("button");
     btn.textContent = option;
     btn.onclick = () => {
-      if (option === wordData.correct) {
+      if (answeredCorrectly) return;
+
+      if (option === wordObj.correct) {
         feedbackEl.textContent = "✅ נכון!";
+        answeredCorrectly = true;
+        showNextButton();
       } else {
         feedbackEl.textContent = "❌ טעות, נסה שוב.";
       }
     };
     choicesEl.appendChild(btn);
   });
+}
 
-  // שמיעת מילה
-  document.getElementById("speak-btn").onclick = () => {
-    const utterance = new SpeechSynthesisUtterance(wordData.word);
-    utterance.lang = "en-US";
-    speechSynthesis.speak(utterance);
+function showNextButton() {
+  const feedbackEl = document.getElementById("feedback");
+  const nextBtn = document.createElement("button");
+  nextBtn.textContent = "הבא ➡️";
+  nextBtn.style.marginTop = "10px";
+  nextBtn.onclick = () => {
+    currentWordIndex++;
+    if (currentWordIndex >= wordsList.length) {
+      currentWordIndex = 0; // מתחילים מהתחלה (נשפר בהמשך)
+      alert("הגעת לסוף הרשימה!");
+    }
+    loadWord();
   };
-
-  // שמירת מילה
-  document.getElementById("save-btn").onclick = () => {
-    alert("הוספת את המילה לרשימת מילים שמורות (נוסיף בהמשך).");
-  };
-
-  // כפתור מילים שמורות
-  document.getElementById("show-saved-btn").onclick = () => {
-    alert("תיקיית מילים שמורות תיפתח כאן בהמשך.");
-  };
-});
+  feedbackEl.appendChild(document.createElement("
