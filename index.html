@@ -1,27 +1,24 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>אפליקציית לימוד אוצר מילים</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>לימוד אוצר מילים</title>
+    <link rel="stylesheet" href="style.css"> </head>
 <body>
-  <div class="container">
-    <h1>לימוד אוצר מילים באנגלית</h1>
+    <div class="container">
+        <h1 id="word"></h1>
+        <div id="options">
+            <button class="option" onclick="checkAnswer(this)"></button>
+            <button class="option" onclick="checkAnswer(this)"></button>
+            <button class="option" onclick="checkAnswer(this)"></button>
+            <button class="option" onclick="checkAnswer(this)"></button>
+        </div>
+        <p id="message"></p>
+        <button id="save-word-btn">שמור מילה</button>
+        <button id="pronounce-btn">הגייה</button>
+        <p id="sentence-example"></p>
+    </div>
 
-    <p id="english-word">מילה באנגלית תופיע כאן</p>
-    <p id="sentence">משפט עם חלל יופיע כאן</p>
-
-    <div id="options-container"></div>
-
-    <p id="feedback"></p>
-
-    <button id="save-button">שמור מילה</button>
-    <button id="speak-button">🔊 שמע</button>
-    <button id="next-button" disabled>המשך</button>
-  </div>
-
-  <script src="script.js"></script>
-</body>
+    <script src="script.js"></script> </body>
 </html>
