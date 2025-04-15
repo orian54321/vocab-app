@@ -2,34 +2,25 @@
 <html lang="he">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>לימוד אוצר מילים באנגלית</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>לימוד אוצר מילים באנגלית</h1>
+  <h1>לימוד אוצר מילים באנגלית</h1>
 
-    <div id="word-section">
-      <h2 id="english-word">Loading...</h2>
-      <div id="choices"></div>
-      <p id="sentence">______</p>
-      <p id="feedback"></p>
-    </div>
+  <div id="word-container">
+    <div id="english-word" class="word">מילה באנגלית</div>
+    <div id="choices" class="choices"></div>
+    <div id="sentence" class="sentence">משפט עם ______</div>
+    <div id="feedback" class="feedback"></div>
+  </div>
 
-    <div id="buttons">
-      <button id="speak-btn">🔊 שמע את המילה</button>
-      <button id="save-btn">⭐ שמור מילה</button>
-      <button id="show-saved-btn">📁 מילים שמורות</button>
-    </div>
-
-    <div id="folders">
-      <h3>בחר תיקיית מילים:</h3>
-      <div id="folder-buttons">
-        <button onclick="loadFolder(1)">תיקייה 1</button>
-        <!-- נוסיף עוד תיקיות בהמשך -->
-      </div>
-    </div>
+  <div class="buttons">
+    <button id="speak-btn">🔊 שמע</button>
+    <button id="save-btn">⭐ שמור מילה</button>
+    <button id="show-saved-btn">📁 מילים שמורות</button>
+    <button id="next-btn">➡️ הבא</button>
   </div>
 
   <script src="script.js"></script>
