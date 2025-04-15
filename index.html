@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -9,26 +9,16 @@
 <body>
   <div class="container">
     <h1>לימוד אוצר מילים באנגלית</h1>
-    
     <div id="question-container">
       <p id="english-word">מילה באנגלית תופיע כאן</p>
-      <p id="sentence">משפט עם רווח</p>
+      <p id="sentence"></p>
       <div id="options-container"></div>
       <p id="feedback"></p>
-
+      <button id="save-button">שמור מילה</button>
+      <button id="speak-button">🔊 שמע</button>
       <button id="next-button">המשך</button>
-      <button onclick="saveWord()">שמור מילה לתרגול</button>
-      <button onclick="removeSavedWord()">הסר מהמילים השמורות</button>
-      <button onclick="speakWord()">השמע הגייה</button>
-    </div>
-
-    <hr />
-    <div id="saved-words-section">
-      <h3>מילים שמורות:</h3>
-      <ul id="saved-words-list"></ul>
     </div>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
