@@ -1,42 +1,22 @@
 body {
     font-family: Arial, sans-serif;
-    text-align: center;
     direction: rtl;
-    background-color: #f9f9f9;
+    text-align: center;
     padding: 20px;
+    background-color: #f4f4f4;
 }
 
-h1 {
-    color: #333;
+button {
+    margin: 5px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
 }
 
 #word-container {
     background-color: white;
     padding: 20px;
-    margin: auto;
-    max-width: 600px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-button {
-    margin: 10px;
-    padding: 10px 20px;
-    border: none;
-    background-color: #4CAF50;
-    color: white;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-button:disabled {
-    background-color: gray;
-}
-
-#options button {
-    display: block;
-    width: 100%;
-    margin: 5px auto;
-    background-color: #2196F3;
+    display: inline-block;
 }
