@@ -21,6 +21,7 @@ const wordsList = [
 
 let currentWordIndex = 0;
 let answeredCorrectly = false;
+let savedWords = JSON.parse(localStorage.getItem("savedWords")) || [];
 
 document.addEventListener("DOMContentLoaded", () => {
   loadWord();
@@ -33,12 +34,17 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   document.getElementById("save-btn").addEventListener("click", () => {
-    alert("המילה תישמר לרשימת מילים שמורות (בהמשך).");
+    const word = wordsList[currentWordIndex].word;
+    if (!savedWords.includes(word)) {
+      savedWords.push(word);
+      localStorage.setItem("savedWords", JSON.stringify(savedWords));
+      alert(`המילה "${word}" נשמרה.`);
+    } else {
+      alert(`המילה "${word}" כבר קיימת ברשימה.`);
+    }
   });
 
-  document.getElementById("show-saved-btn").addEventListener("click", () => {
-    alert("כאן תוצג רשימת מילים שמורות (בהמשך).");
-  });
+  document.getElementById("show-saved-btn").addEventListener("click", showSavedWords);
 
   document.getElementById("next-btn").addEventListener("click", () => {
     if (!answeredCorrectly) {
@@ -80,4 +86,32 @@ function loadWord() {
     choicesContainer.appendChild(btn);
   });
 }
- 
+
+function showSavedWords() {
+  const list = document.getElementById("saved-words-list");
+  list.innerHTML = "";
+
+  if (savedWords.length === 0) {
+    list.innerHTML = "<li>אין מילים שמורות עדיין.</li>";
+  } else {
+    savedWords.forEach((word, index) => {
+      const li = document.createElement("li");
+      li.textContent = word + " ";
+      const removeBtn = document.createElement("button");
+      removeBtn.textContent = "❌ הסר";
+      removeBtn.addEventListener("click", () => {
+        savedWords.splice(index, 1);
+        localStorage.setItem("savedWords", JSON.stringify(savedWords));
+        showSavedWords();
+      });
+      li.appendChild(removeBtn);
+      list.appendChild(li);
+    });
+  }
+
+  document.getElementById("saved-words-container").classList.remove("hidden");
+}
+
+function closeSavedWords() {
+  document.getElementById("saved-words-container").classList.add("hidden");
+}
