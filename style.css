@@ -3,7 +3,7 @@ body {
   direction: rtl;
   text-align: center;
   padding: 20px;
-  background-color: #f4f4f4;
+  background-color: #f0f0f0;
 }
 
 .word {
@@ -40,6 +40,9 @@ body {
   border: 2px solid #aaa;
   padding: 20px;
   margin-top: 30px;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hidden {
