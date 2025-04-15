@@ -7,23 +7,19 @@
 </head>
 <body dir="rtl">
   <h1>לימוד אוצר מילים באנגלית</h1>
-  
   <div id="word-container">
     <h2 id="english-word"></h2>
-    <div id="choices" class="choices"></div>
-    <p id="sentence" class="sentence"></p>
-    <p id="feedback" class="feedback"></p>
-
-    <div class="buttons">
-      <button id="speak-btn">🔊 שמע הגייה</button>
-      <button id="save-btn">⭐ שמור מילה</button>
-      <button id="next-btn">➡️ מילה הבאה</button>
-    </div>
+    <div id="choices"></div>
+    <p id="sentence"></p>
+    <p id="feedback"></p>
+    <button id="speak-btn">🔊 שמע הגייה</button>
+    <button id="save-btn">⭐ שמור מילה</button>
+    <button id="next-btn">➡️ מילה הבאה</button>
   </div>
 
   <button id="show-saved-btn">📁 מילים שמורות</button>
-  
-  <div id="saved-words-container" class="saved-words hidden">
+
+  <div id="saved-words-container" class="hidden">
     <h3>📁 מילים שמורות</h3>
     <ul id="saved-words-list"></ul>
     <button onclick="closeSavedWords()">❌ סגור</button>
@@ -31,10 +27,7 @@
 
   <h3>בחר תיקייה:</h3>
   <div id="folder-buttons">
-    <button onclick="selectFolder(1)">📂 תיקייה 1</button>
-    <button onclick="selectFolder(2)">📂 תיקייה 2</button>
-    <button onclick="selectFolder(3)">📂 תיקייה 3</button>
-    <!-- נוסיף תיקיות נוספות בהמשך -->
+    <!-- כפתורי תיקיות ייווצרו דינמית -->
   </div>
 
   <script src="script.js"></script>
