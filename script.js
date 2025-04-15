@@ -1,56 +1,38 @@
-// מילים בתיקיות לדוגמה
-const folders = {
-  1: [
-    {
-      word: "apple",
-      correct: "תפוח",
-      options: ["תפוח", "כיסא", "חתול", "ספר"],
-      sentence: "I eat an ______ every morning."
-    },
-    {
-      word: "dog",
-      correct: "כלב",
-      options: ["חתול", "ילד", "כלב", "מים"],
-      sentence: "The ______ is barking loudly."
-    },
-    {
-      word: "book",
-      correct: "ספר",
-      options: ["מיטה", "ספר", "שולחן", "בית"],
-      sentence: "She is reading a ______."
-    }
-  ],
-  2: [], // נוסיף בהמשך
-  3: []  // נוסיף בהמשך
-};
-
+let folders = {};
 let currentFolder = 1;
-let wordsList = folders[currentFolder];
+let wordsList = [];
 let currentWordIndex = 0;
 let answeredCorrectly = false;
 let savedWords = [];
 
-// טען שמירה קיימת אם קיימת
 document.addEventListener("DOMContentLoaded", () => {
-  const saved = localStorage.getItem("savedWords");
-  if (saved) savedWords = JSON.parse(saved);
-
-  const savedIndex = localStorage.getItem("currentIndex");
-  if (savedIndex) currentWordIndex = parseInt(savedIndex);
-
-  const savedFolder = localStorage.getItem("currentFolder");
-  if (savedFolder && folders[savedFolder]) {
-    currentFolder = parseInt(savedFolder);
-    wordsList = folders[currentFolder];
-  }
-
-  loadWord();
+  fetch('words.json')
+    .then(response => response.json())
+    .then(data => {
+      folders = data;
+      createFolderButtons();
+      const stored = localStorage.getItem("savedWords");
+      if (stored) savedWords = JSON.parse(stored);
+      selectFolder(1);
+    });
 
   document.getElementById("speak-btn").addEventListener("click", speakWord);
   document.getElementById("save-btn").addEventListener("click", saveWord);
   document.getElementById("show-saved-btn").addEventListener("click", showSavedWords);
   document.getElementById("next-btn").addEventListener("click", nextWord);
 });
+
+function createFolderButtons() {
+  const folderButtonsDiv = document.getElementById("folder-buttons");
+  folderButtonsDiv.innerHTML = "";
+  const folderNumbers = Object.keys(folders).map(Number).sort((a, b) => a - b);
+  folderNumbers.forEach(folderNumber => {
+    const button = document.createElement("button");
+    button.textContent = `📂 תיקייה ${folderNumber}`;
+    button.addEventListener("click", () => selectFolder(folderNumber));
+    folderButtonsDiv.appendChild(button);
+  });
+}
 
 function selectFolder(folderNumber) {
   if (!folders[folderNumber] || folders[folderNumber].length === 0) {
@@ -61,10 +43,6 @@ function selectFolder(folderNumber) {
   currentFolder = folderNumber;
   wordsList = folders[currentFolder];
   currentWordIndex = 0;
-
-  localStorage.setItem("currentFolder", folderNumber);
-  localStorage.setItem("currentIndex", 0);
-
   loadWord();
 }
 
@@ -97,6 +75,7 @@ function showSavedWords() {
     savedWords.forEach((word, index) => {
       let wordObj = null;
 
+      // חיפוש המילה בכל התיקיות
       for (const folder of Object.values(folders)) {
         wordObj = folder.find(w => w.word === word);
         if (wordObj) break;
@@ -112,60 +91,6 @@ function showSavedWords() {
       removeBtn.addEventListener("click", () => {
         savedWords.splice(index, 1);
         localStorage.setItem("savedWords", JSON.stringify(savedWords));
-        showSavedWords();
-      });
-
-      li.appendChild(removeBtn);
-      list.appendChild(li);
-    });
-  }
-
-  container.classList.remove("hidden");
-}
-
-function closeSavedWords() {
-  document.getElementById("saved-words-container").classList.add("hidden");
-}
-
-function nextWord() {
-  if (!answeredCorrectly) {
-    alert("עליך לבחור תשובה נכונה קודם.");
-    return;
-  }
-
-  currentWordIndex++;
-  if (currentWordIndex >= wordsList.length) {
-    alert("סיימת את כל המילים בתיקייה זו!");
-    currentWordIndex = 0;
-  }
-
-  localStorage.setItem("currentIndex", currentWordIndex);
-  loadWord();
-}
-
-function loadWord() {
-  const wordObj = wordsList[currentWordIndex];
-  document.getElementById("english-word").textContent = wordObj.word;
-  document.getElementById("sentence").textContent = wordObj.sentence.replace(wordObj.word, "______");
-  document.getElementById("feedback").textContent = "";
-  answeredCorrectly = false;
-
-  const choicesContainer = document.getElementById("choices");
-  choicesContainer.innerHTML = "";
-
-  wordObj.options.forEach(option => {
-    const btn = document.createElement("button");
-    btn.textContent = option;
-    btn.addEventListener("click", () => {
-      if (answeredCorrectly) return;
-
-      if (option === wordObj.correct) {
-        document.getElementById("feedback").textContent = "✅ תשובה נכונה!";
-        answeredCorrectly = true;
-      } else {
-        document.getElementById("feedback").textContent = "❌ טעות, נסה שוב.";
-      }
-    });
-    choicesContainer.appendChild(btn);
-  });
-}
+        showSavedWords
+::contentReference[oaicite:7]{index=7}
+ 
