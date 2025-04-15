@@ -1,24 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>לימוד אוצר מילים</title>
-    <link rel="stylesheet" href="style.css"> </head>
+    <title>אפליקציית לימוד מילים באנגלית</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 <body>
-    <div class="container">
-        <h1 id="word"></h1>
-        <div id="options">
-            <button class="option" onclick="checkAnswer(this)"></button>
-            <button class="option" onclick="checkAnswer(this)"></button>
-            <button class="option" onclick="checkAnswer(this)"></button>
-            <button class="option" onclick="checkAnswer(this)"></button>
-        </div>
-        <p id="message"></p>
-        <button id="save-word-btn">שמור מילה</button>
-        <button id="pronounce-btn">הגייה</button>
-        <p id="sentence-example"></p>
+    <h1>לימוד אוצר מילים באנגלית</h1>
+    
+    <div id="word-container">
+        <h2 id="english-word">טעינה...</h2>
+        <button id="speak-btn">🔊 השמע</button>
+        <p id="sentence"></p>
+        <div id="options"></div>
+        <p id="feedback"></p>
+        <button id="next-btn" disabled>למילה הבאה ➡️</button>
+        <button id="save-word-btn">💾 שמור מילה</button>
     </div>
 
-    <script src="script.js"></script> </body>
+    <h3>📌 מילים שמורות:</h3>
+    <ul id="saved-words-list"></ul>
+
+    <script src="script.js"></script>
+</body>
 </html>
