@@ -1,95 +1,96 @@
 const words = [
   {
     english: "apple",
-    hebrewOptions: ["תפוח", "בננה", "חתול", "ספר"],
+    hebrewOptions: ["תפוח", "חתול", "כיסא", "מים"],
     correct: "תפוח",
     sentence: "I ate an _____ for breakfast."
   },
   {
     english: "run",
-    hebrewOptions: ["לרוץ", "לאכול", "לישון", "לשבת"],
+    hebrewOptions: ["לרוץ", "לישון", "לצחוק", "לקרוא"],
     correct: "לרוץ",
     sentence: "Every morning, I _____ in the park."
   },
   {
     english: "book",
-    hebrewOptions: ["מיטה", "שולחן", "ספר", "מחשב"],
+    hebrewOptions: ["מחשב", "ספר", "אוכל", "בית"],
     correct: "ספר",
     sentence: "She read a great _____ last night."
   }
 ];
 
 let currentWordIndex = 0;
-let correctSelected = false;
-
 const savedWords = JSON.parse(localStorage.getItem("savedWords")) || [];
 
+const englishWordElem = document.getElementById("english-word");
+const sentenceElem = document.getElementById("sentence");
+const optionsContainer = document.getElementById("options-container");
+const feedbackElem = document.getElementById("feedback");
+const nextButton = document.getElementById("next-button");
+const saveButton = document.getElementById("save-button");
+const speakButton = document.getElementById("speak-button");
+
 function showWord() {
-  correctSelected = false;
-
-  const wordObj = words[currentWordIndex];
-
-  document.getElementById("english-word").innerText = wordObj.english;
-  document.getElementById("sentence").innerText = wordObj.sentence.replace(wordObj.english, "_____");
-
-  const optionsContainer = document.getElementById("options-container");
+  const word = words[currentWordIndex];
+  englishWordElem.innerText = word.english;
+  sentenceElem.innerText = word.sentence.replace(word.english, "_____");
+  feedbackElem.innerText = "";
+  nextButton.disabled = true;
   optionsContainer.innerHTML = "";
 
-  wordObj.hebrewOptions.forEach(option => {
+  word.hebrewOptions.forEach(option => {
     const btn = document.createElement("button");
-    btn.innerText = option;
     btn.classList.add("option-button");
+    btn.innerText = option;
     btn.onclick = () => checkAnswer(option, btn);
     optionsContainer.appendChild(btn);
   });
-
-  document.getElementById("feedback").innerText = "";
-  document.getElementById("next-button").disabled = true;
 }
 
 function checkAnswer(selected, button) {
-  const wordObj = words[currentWordIndex];
-  const feedback = document.getElementById("feedback");
+  const word = words[currentWordIndex];
+  if (selected === word.correct) {
+    feedbackElem.innerText = "צדקת!";
+    feedbackElem.style.color = "green";
+    nextButton.disabled = false;
 
-  if (selected === wordObj.correct) {
-    feedback.innerText = "צדקת!";
-    feedback.style.color = "green";
-    correctSelected = true;
-
-    // כפתור "המשך" מופעל רק אחרי תשובה נכונה
-    document.getElementById("next-button").disabled = false;
-
-    // מנטרל את כל הכפתורים
-    const buttons = document.querySelectorAll(".option-button");
-    buttons.forEach(btn => btn.disabled = true);
+    // נטרל את כל הכפתורים האחרים
+    const allButtons = document.querySelectorAll(".option-button");
+    allButtons.forEach(btn => {
+      btn.disabled = true;
+      if (btn.innerText === word.correct) {
+        btn.style.backgroundColor = "#a5d6a7"; // ירוק
+      }
+    });
   } else {
-    feedback.innerText = "טעית!";
-    feedback.style.color = "red";
-
-    // מבטל רק את הכפתור של התשובה השגויה
+    feedbackElem.innerText = "טעית.";
+    feedbackElem.style.color = "red";
     button.disabled = true;
+    button.style.backgroundColor = "#ef9a9a"; // אדום
   }
 }
 
-function goToNextWord() {
-  if (!correctSelected) {
-    alert("עליך לבחור את התשובה הנכונה לפני שתוכל להמשיך.");
-    return;
-  }
+nextButton.addEventListener("click", () => {
   currentWordIndex = (currentWordIndex + 1) % words.length;
   showWord();
-}
+});
 
-function saveWord() {
-  const wordObj = words[currentWordIndex];
-  if (!savedWords.includes(wordObj.english)) {
-    savedWords.push(wordObj.english);
+saveButton.addEventListener("click", () => {
+  const word = words[currentWordIndex];
+  if (!savedWords.includes(word.english)) {
+    savedWords.push(word.english);
     localStorage.setItem("savedWords", JSON.stringify(savedWords));
     alert("המילה נשמרה!");
   } else {
     alert("המילה כבר שמורה.");
   }
-}
+});
 
-function speakWord() {
-  const wordObj = words[currentWordIndex];
+speakButton.addEventListener("click", () => {
+  const word = words[currentWordIndex];
+  const utterance = new SpeechSynthesisUtterance(word.english);
+  speechSynthesis.speak(utterance);
+});
+
+// התחלה
+showWord();
