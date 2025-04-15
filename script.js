@@ -3,51 +3,55 @@ const words = [
     english: "apple",
     hebrewOptions: ["תפוח", "בננה", "חתול", "ספר"],
     correct: "תפוח",
-    sentence: "I ate an apple for breakfast."
+    sentence: "I ate an _____ for breakfast."
   },
   {
     english: "run",
     hebrewOptions: ["לרוץ", "לאכול", "לישון", "לשבת"],
     correct: "לרוץ",
-    sentence: "Every morning, I run in the park."
+    sentence: "Every morning, I _____ in the park."
   },
   {
     english: "book",
     hebrewOptions: ["מיטה", "שולחן", "ספר", "מחשב"],
     correct: "ספר",
-    sentence: "She read a great book last night."
+    sentence: "She read a great _____ last night."
   }
 ];
 
 let currentWordIndex = 0;
-let savedWords = JSON.parse(localStorage.getItem("savedWords")) || [];
+const savedWords = JSON.parse(localStorage.getItem("savedWords")) || [];
 
 function showWord() {
   const wordObj = words[currentWordIndex];
+
+  // הצגת המילה באנגלית
   document.getElementById("english-word").innerText = wordObj.english;
 
-  // משפט עם רווח במקום המילה
-  const blankSentence = wordObj.sentence.replace(wordObj.english, "_____");
-  document.getElementById("sentence").innerText = blankSentence;
+  // הצגת המשפט עם חלל
+  document.getElementById("sentence").innerText = wordObj.sentence;
 
-  const container = document.getElementById("options-container");
-  container.innerHTML = "";
+  // ניקוי אפשרויות ישנות
+  const optionsContainer = document.getElementById("options-container");
+  optionsContainer.innerHTML = "";
 
+  // יצירת כפתורי תשובות
   wordObj.hebrewOptions.forEach(option => {
     const btn = document.createElement("button");
     btn.innerText = option;
-    btn.className = "option-button";
+    btn.classList.add("option-button");
     btn.onclick = () => checkAnswer(option);
-    container.appendChild(btn);
+    optionsContainer.appendChild(btn);
   });
 
+  // איפוס המשוב
   document.getElementById("feedback").innerText = "";
-  displaySavedWords();
 }
 
 function checkAnswer(selected) {
   const wordObj = words[currentWordIndex];
   const feedback = document.getElementById("feedback");
+
   if (selected === wordObj.correct) {
     feedback.innerText = "נכון!";
     feedback.style.color = "green";
@@ -55,6 +59,8 @@ function checkAnswer(selected) {
     feedback.innerText = "לא נכון";
     feedback.style.color = "red";
   }
+
+  // המתנה שנייה ואז מעבר למילה הבאה
   setTimeout(() => {
     currentWordIndex = (currentWordIndex + 1) % words.length;
     showWord();
@@ -67,22 +73,8 @@ function saveWord() {
     savedWords.push(wordObj.english);
     localStorage.setItem("savedWords", JSON.stringify(savedWords));
     alert("המילה נשמרה!");
-    displaySavedWords();
   } else {
     alert("המילה כבר שמורה.");
-  }
-}
-
-function removeSavedWord() {
-  const wordObj = words[currentWordIndex];
-  const index = savedWords.indexOf(wordObj.english);
-  if (index !== -1) {
-    savedWords.splice(index, 1);
-    localStorage.setItem("savedWords", JSON.stringify(savedWords));
-    alert("המילה הוסרה מהרשימה.");
-    displaySavedWords();
-  } else {
-    alert("המילה לא קיימת ברשימת מילים שמורות.");
   }
 }
 
@@ -92,20 +84,14 @@ function speakWord() {
   speechSynthesis.speak(utterance);
 }
 
-function displaySavedWords() {
-  const list = document.getElementById("saved-words-list");
-  list.innerHTML = "";
-  savedWords.forEach(word => {
-    const li = document.createElement("li");
-    li.innerText = word;
-    list.appendChild(li);
-  });
-}
-
-// התחלה
+// חיבורים לכפתורים
 document.getElementById("next-button").addEventListener("click", () => {
   currentWordIndex = (currentWordIndex + 1) % words.length;
   showWord();
 });
 
+document.getElementById("save-button").addEventListener("click", saveWord);
+document.getElementById("speak-button").addEventListener("click", speakWord);
+
+// הצגת מילה ראשונה עם טעינת העמוד
 showWord();
