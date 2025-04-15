@@ -38,9 +38,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!savedWords.includes(word)) {
       savedWords.push(word);
       localStorage.setItem("savedWords", JSON.stringify(savedWords));
-      alert(`המילה "${word}" נשמרה.`);
+      alert(`המילה "${word}" נשמרה לרשימת מילים שמורות.`);
     } else {
-      alert(`המילה "${word}" כבר קיימת ברשימה.`);
+      alert(`המילה "${word}" כבר קיימת ברשימת מילים שמורות.`);
     }
   });
 
@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function loadWord() {
   const wordObj = wordsList[currentWordIndex];
   document.getElementById("english-word").textContent = wordObj.word;
-  document.getElementById("sentence").textContent = wordObj.sentence;
+  document.getElementById("sentence").textContent = wordObj.sentence.replace(wordObj.word, "______");
   document.getElementById("feedback").textContent = "";
   answeredCorrectly = false;
 
@@ -102,7 +102,7 @@ function showSavedWords() {
       removeBtn.addEventListener("click", () => {
         savedWords.splice(index, 1);
         localStorage.setItem("savedWords", JSON.stringify(savedWords));
-        showSavedWords();
+        showSavedWords(); // מרענן את הרשימה
       });
       li.appendChild(removeBtn);
       list.appendChild(li);
