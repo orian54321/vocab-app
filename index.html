@@ -1,69 +1,25 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>לימוד אוצר מילים באנגלית</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      direction: rtl;
-      background-color: #f9f9f9;
-      color: #333;
-      margin: 0;
-      padding: 20px;
-    }
-    h1 {
-      margin-bottom: 20px;
-    }
-    .word {
-      font-size: 2em;
-      margin: 20px 0;
-    }
-    .options button {
-      display: block;
-      margin: 10px auto;
-      padding: 10px 20px;
-      font-size: 1.2em;
-      width: 60%;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      background-color: white;
-      cursor: pointer;
-    }
-    .options button:hover {
-      background-color: #f0f0f0;
-    }
-    .buttons {
-      margin-top: 20px;
-    }
-    select {
-      font-size: 1em;
-      padding: 5px;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>לימוד אוצר מילים באנגלית</h1>
-
-  <div>
-    <label for="folderSelect">בחר תיקייה:</label>
-    <select id="folderSelect">
-      <option value="folder1.json">תיקייה 1</option>
-      <!-- נוסיף עוד תיקיות בהמשך -->
-    </select>
+  <div class="container">
+    <h1>לימוד אוצר מילים באנגלית</h1>
+    <div id="question-container">
+      <div id="word"></div>
+      <div id="sentence"></div>
+      <div id="options"></div>
+    </div>
+    <div id="feedback"></div>
+    <div id="buttons">
+      <button id="save-btn">שמור מילה</button>
+      <button id="next-btn">שאלה הבאה</button>
+    </div>
   </div>
-
-  <div class="word" id="word">טוען...</div>
-
-  <div class="options" id="options"></div>
-
-  <div class="buttons">
-    <button onclick="saveWord()">שמור מילה</button>
-    <button onclick="loadSavedWords()">תרגל מילים שמורות</button>
-  </div>
-
   <script src="script.js"></script>
 </body>
 </html>
