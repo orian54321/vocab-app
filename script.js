@@ -1,24 +1,30 @@
-const wordsList = [
-  {
-    word: "apple",
-    correct: "תפוח",
-    options: ["תפוח", "כיסא", "חתול", "ספר"],
-    sentence: "I eat an ______ every morning."
-  },
-  {
-    word: "dog",
-    correct: "כלב",
-    options: ["חתול", "ילד", "כלב", "מים"],
-    sentence: "The ______ is barking loudly."
-  },
-  {
-    word: "book",
-    correct: "ספר",
-    options: ["מיטה", "ספר", "שולחן", "בית"],
-    sentence: "She is reading a ______."
-  }
-];
+const folders = {
+  1: [
+    {
+      word: "apple",
+      correct: "תפוח",
+      options: ["תפוח", "כיסא", "חתול", "ספר"],
+      sentence: "I eat an ______ every morning."
+    },
+    {
+      word: "dog",
+      correct: "כלב",
+      options: ["חתול", "ילד", "כלב", "מים"],
+      sentence: "The ______ is barking loudly."
+    },
+    {
+      word: "book",
+      correct: "ספר",
+      options: ["מיטה", "ספר", "שולחן", "בית"],
+      sentence: "She is reading a ______."
+    }
+  ],
+  2: [], // נוסיף תוכן בהמשך
+  3: []  // נוסיף תוכן בהמשך
+};
 
+let currentFolder = 1;
+let wordsList = folders[currentFolder];
 let currentWordIndex = 0;
 let answeredCorrectly = false;
 let savedWords = [];
@@ -34,6 +40,18 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("show-saved-btn").addEventListener("click", showSavedWords);
   document.getElementById("next-btn").addEventListener("click", nextWord);
 });
+
+function selectFolder(folderNumber) {
+  if (!folders[folderNumber] || folders[folderNumber].length === 0) {
+    alert("התיקייה עדיין ריקה.");
+    return;
+  }
+
+  currentFolder = folderNumber;
+  wordsList = folders[currentFolder];
+  currentWordIndex = 0;
+  loadWord();
+}
 
 function speakWord() {
   const word = wordsList[currentWordIndex].word;
@@ -62,7 +80,14 @@ function showSavedWords() {
     list.innerHTML = "<li>אין מילים שמורות עדיין.</li>";
   } else {
     savedWords.forEach((word, index) => {
-      const wordObj = wordsList.find(w => w.word === word);
+      let wordObj = null;
+
+      // חיפוש המילה בכל התיקיות
+      for (const folder of Object.values(folders)) {
+        wordObj = folder.find(w => w.word === word);
+        if (wordObj) break;
+      }
+
       const translation = wordObj ? wordObj.correct : "";
 
       const li = document.createElement("li");
@@ -96,7 +121,7 @@ function nextWord() {
 
   currentWordIndex++;
   if (currentWordIndex >= wordsList.length) {
-    alert("סיימת את כל המילים! מתחילים מההתחלה.");
+    alert("סיימת את כל המילים בתיקייה זו!");
     currentWordIndex = 0;
   }
   loadWord();
