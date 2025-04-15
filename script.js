@@ -21,50 +21,44 @@ const words = [
 
 let currentWordIndex = 0;
 const savedWords = JSON.parse(localStorage.getItem("savedWords")) || [];
+let isCorrectAnswer = false;
 
 function showWord() {
   const wordObj = words[currentWordIndex];
+  isCorrectAnswer = false;
 
-  // הצגת המילה באנגלית
   document.getElementById("english-word").innerText = wordObj.english;
-
-  // הצגת המשפט עם חלל
   document.getElementById("sentence").innerText = wordObj.sentence;
 
-  // ניקוי אפשרויות ישנות
   const optionsContainer = document.getElementById("options-container");
   optionsContainer.innerHTML = "";
 
-  // יצירת כפתורי תשובות
   wordObj.hebrewOptions.forEach(option => {
     const btn = document.createElement("button");
     btn.innerText = option;
     btn.classList.add("option-button");
-    btn.onclick = () => checkAnswer(option);
+    btn.onclick = () => checkAnswer(option, btn);
     optionsContainer.appendChild(btn);
   });
 
-  // איפוס המשוב
   document.getElementById("feedback").innerText = "";
+  document.getElementById("next-button").disabled = true;
 }
 
-function checkAnswer(selected) {
+function checkAnswer(selected, buttonElement) {
   const wordObj = words[currentWordIndex];
   const feedback = document.getElementById("feedback");
 
   if (selected === wordObj.correct) {
-    feedback.innerText = "נכון!";
+    feedback.innerText = "צדקת!";
     feedback.style.color = "green";
+    isCorrectAnswer = true;
+    document.getElementById("next-button").disabled = false;
   } else {
-    feedback.innerText = "לא נכון";
+    feedback.innerText = "טעית!";
     feedback.style.color = "red";
+    buttonElement.disabled = true; // מבטל את האפשרות ללחוץ שוב על אותה טעות
   }
-
-  // המתנה שנייה ואז מעבר למילה הבאה
-  setTimeout(() => {
-    currentWordIndex = (currentWordIndex + 1) % words.length;
-    showWord();
-  }, 1000);
 }
 
 function saveWord() {
@@ -84,8 +78,8 @@ function speakWord() {
   speechSynthesis.speak(utterance);
 }
 
-// חיבורים לכפתורים
 document.getElementById("next-button").addEventListener("click", () => {
+  if (!isCorrectAnswer) return;
   currentWordIndex = (currentWordIndex + 1) % words.length;
   showWord();
 });
@@ -93,5 +87,4 @@ document.getElementById("next-button").addEventListener("click", () => {
 document.getElementById("save-button").addEventListener("click", saveWord);
 document.getElementById("speak-button").addEventListener("click", speakWord);
 
-// הצגת מילה ראשונה עם טעינת העמוד
 showWord();
