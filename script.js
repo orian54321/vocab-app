@@ -102,6 +102,35 @@ function nextWord() {
   showNextWord();
 }
 
+// --- פונקציה לשמירת מילה בתיקייה ---
+function saveCurrentWord() {
+  if (!currentWord) return;
+
+  let savedFolders = JSON.parse(localStorage.getItem("savedFolders")) || {};
+  let folderIndex = 1;
+
+  // חיפוש תיקייה פנויה (שיש בה פחות מ-50 מילים)
+  while (savedFolders[`folder${folderIndex}`] && savedFolders[`folder${folderIndex}`].length >= 50) {
+    folderIndex++;
+  }
+
+  const folderKey = `folder${folderIndex}`;
+  if (!savedFolders[folderKey]) {
+    savedFolders[folderKey] = [];
+  }
+
+  // בדיקה אם המילה כבר שמורה
+  const isAlreadySaved = savedFolders[folderKey].some(w => w.english === currentWord.english);
+  if (isAlreadySaved) {
+    alert("המילה כבר שמורה בתיקייה הזו.");
+    return;
+  }
+
+  savedFolders[folderKey].push(currentWord);
+  localStorage.setItem("savedFolders", JSON.stringify(savedFolders));
+  alert(`המילה נשמרה בתיקייה: מילים שמורות ${folderIndex}`);
+}
+
 // טוען את התרגול רק במסך practice
 if (window.location.pathname.includes("practice.html")) {
   window.onload = loadPractice;
