@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he">
 <head>
   <meta charset="UTF-8">
   <title>מילים שמורות</title>
@@ -7,56 +7,8 @@
 </head>
 <body>
   <h1>מילים שמורות</h1>
-
-  <div id="saved-words"></div>
-
-  <br>
-  <button onclick="goBack()">חזרה להזנת מילים</button>
-  <button onclick="goToPractice()">מעבר לתרגול</button>
-
-  <script>
-    function loadSavedWords() {
-      const container = document.getElementById("saved-words");
-      const words = JSON.parse(localStorage.getItem("savedWords")) || [];
-
-      if (words.length === 0) {
-        container.innerHTML = "<p>אין מילים שמורות.</p>";
-        return;
-      }
-
-      words.forEach((word, index) => {
-        const div = document.createElement("div");
-        div.style.border = "1px solid #ccc";
-        div.style.padding = "10px";
-        div.style.margin = "10px";
-
-        div.innerHTML = `
-          <strong>אנגלית:</strong> ${word.english}<br>
-          <strong>עברית:</strong> ${word.hebrew}<br>
-          <strong>משפט:</strong> ${word.sentence}<br>
-          <button onclick="deleteWord(${index})">מחק מילה זו</button>
-        `;
-
-        container.appendChild(div);
-      });
-    }
-
-    function deleteWord(index) {
-      const words = JSON.parse(localStorage.getItem("savedWords")) || [];
-      words.splice(index, 1);
-      localStorage.setItem("savedWords", JSON.stringify(words));
-      location.reload();
-    }
-
-    function goBack() {
-      window.location.href = "index.html";
-    }
-
-    function goToPractice() {
-      window.location.href = "practice.html";
-    }
-
-    window.onload = loadSavedWords;
-  </script>
+  <div id="foldersContainer"></div>
+  <button onclick="location.href='practice.html'">🔙 חזרה לתרגול</button>
+  <script src="script.js"></script>
 </body>
 </html>
