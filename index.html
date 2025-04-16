@@ -4,22 +4,27 @@
   <meta charset="UTF-8">
   <title>הזנת מילים</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
-  <h1>הזנת מילים לאוצר מילים</h1>
+  <h1>הזנת מילים באנגלית</h1>
 
-  <label for="englishWord">מילה באנגלית:</label><br>
-  <input type="text" id="englishWord"><br><br>
+  <label>מילה באנגלית:</label>
+  <input type="text" id="englishWord"><br>
 
-  <label for="hebrewWord">תרגום לעברית:</label><br>
-  <input type="text" id="hebrewWord"><br><br>
+  <label>תרגום לעברית:</label>
+  <input type="text" id="hebrewWord"><br>
 
-  <label for="exampleSentence">משפט לדוגמה (לא חובה):</label><br>
+  <label>משפט דוגמה (לא חובה):</label>
   <input type="text" id="exampleSentence"><br><br>
 
   <button onclick="addWord()">הוסף מילה</button>
   <button onclick="goToPractice()">מעבר לתרגול</button>
-  <button onclick="goToSaved()">מילים שמורות</button>
+  <button onclick="goToSaved()">מעבר למילים שמורות</button>
+
+  <h3>ייבוא מילים מקובץ Excel</h3>
+  <input type="file" id="excelFile">
+  <button onclick="importFromExcel()">ייבא קובץ</button>
 
   <script src="script.js"></script>
 </body>
