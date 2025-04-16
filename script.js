@@ -1,4 +1,38 @@
-// --- ייבוא מילים מקובץ Excel ---
+// --- יצירת משפט חכם אוטומטי ---
+function generateSmartSentence(word) {
+  return `Here is an example sentence using the word "${word}" in context.`;
+}
+
+// --- פונקציה להוספת מילה חדשה ---
+function addWord() {
+  const english = document.getElementById("englishWord").value.trim();
+  const hebrew = document.getElementById("hebrewWord").value.trim();
+  const sentence = document.getElementById("exampleSentence").value.trim();
+
+  if (!english || !hebrew) {
+    alert("יש למלא גם מילה באנגלית וגם בעברית");
+    return;
+  }
+
+  const example = sentence || generateSmartSentence(english);
+
+  const wordData = {
+    english,
+    hebrew,
+    sentence: example
+  };
+
+  let words = JSON.parse(localStorage.getItem("words")) || [];
+  words.push(wordData);
+  localStorage.setItem("words", JSON.stringify(words));
+
+  alert("המילה נוספה בהצלחה!");
+  document.getElementById("englishWord").value = "";
+  document.getElementById("hebrewWord").value = "";
+  document.getElementById("exampleSentence").value = "";
+}
+
+// --- ייבוא מקובץ Excel ---
 function importFromExcel() {
   const fileInput = document.getElementById('excelFile');
   const file = fileInput.files[0];
@@ -24,7 +58,7 @@ function importFromExcel() {
       const wordData = {
         english: row[0].toString().trim(),
         hebrew: row[1].toString().trim(),
-        sentence: row[2] ? row[2].toString().trim() : `This is a sentence with the word ${row[0].toString().trim()}.`
+        sentence: row[2] ? row[2].toString().trim() : generateSmartSentence(row[0].toString().trim())
       };
 
       words.push(wordData);
@@ -37,42 +71,15 @@ function importFromExcel() {
   reader.readAsArrayBuffer(file);
 }
 
-// --- פונקציה להוספת מילה חדשה ידנית ---
-function addWord() {
-  const english = document.getElementById("englishWord").value.trim();
-  const hebrew = document.getElementById("hebrewWord").value.trim();
-  const sentence = document.getElementById("exampleSentence").value.trim();
-
-  if (!english || !hebrew) {
-    alert("יש למלא גם מילה באנגלית וגם בעברית");
-    return;
-  }
-
-  const example = sentence || `This is a sentence with the word ${english}.`;
-
-  const wordData = {
-    english,
-    hebrew,
-    sentence: example
-  };
-
-  let words = JSON.parse(localStorage.getItem("words")) || [];
-  words.push(wordData);
-  localStorage.setItem("words", JSON.stringify(words));
-
-  alert("המילה נוספה בהצלחה!");
-  document.getElementById("englishWord").value = "";
-  document.getElementById("hebrewWord").value = "";
-  document.getElementById("exampleSentence").value = "";
-}
-
-// --- מעבר בין מסכים ---
+// --- פונקציות ניווט ---
 function goToPractice() {
   window.location.href = "practice.html";
 }
+
 function goToSaved() {
   window.location.href = "saved.html";
 }
+
 function goBack() {
   window.location.href = "index.html";
 }
@@ -144,72 +151,30 @@ function nextWord() {
   showNextWord();
 }
 
-// --- השמעת מילה ---
-function speakWord() {
-  if (!currentWord) return;
-
-  const utterance = new SpeechSynthesisUtterance(currentWord.english);
-  utterance.lang = 'en-US';
-  utterance.rate = 1; // קצב רגיל
-
-  // חיפוש קול נשי אם אפשר
-  const voices = window.speechSynthesis.getVoices();
-  const femaleVoice = voices.find(voice => voice.lang === 'en-US' && voice.name.toLowerCase().includes('female'));
-  if (femaleVoice) {
-    utterance.voice = femaleVoice;
-  }
-
-  window.speechSynthesis.speak(utterance);
-}
-
-// --- שמירת מילה נוכחית ---
+// --- שמירת מילה מתוך התרגול ---
 function saveCurrentWord() {
   if (!currentWord) return;
-
-  let savedWords = JSON.parse(localStorage.getItem("savedWords")) || [];
-
-  // בדיקה אם כבר קיימת
-  const alreadyExists = savedWords.some(w => w.english === currentWord.english && w.hebrew === currentWord.hebrew);
-  if (!alreadyExists) {
-    savedWords.push(currentWord);
-    localStorage.setItem("savedWords", JSON.stringify(savedWords));
-    alert("המילה נוספה לרשימת מילים שמורות!");
-  } else {
-    alert("המילה כבר קיימת ברשימת מילים שמורות.");
-  }
+  let words = JSON.parse(localStorage.getItem("words")) || [];
+  words.push(currentWord);
+  localStorage.setItem("words", JSON.stringify(words));
+  alert("המילה נשמרה!");
 }
 
-// --- טוען את התרגול רק אם זה המסך הנוכחי ---
+// --- השמעה ---
+function speakWord() {
+  if (!currentWord) return;
+  const msg = new SpeechSynthesisUtterance(currentWord.english);
+  msg.lang = "en-US";
+  msg.voice = speechSynthesis.getVoices().find(voice => voice.name.includes("Female") || voice.name.includes("Samantha")) || speechSynthesis.getVoices()[0];
+  msg.rate = 1;
+  speechSynthesis.speak(msg);
+}
+
+// --- טעינה למסך תרגול ---
 if (window.location.pathname.includes("practice.html")) {
-  window.onload = loadPractice;
-}
-
-// --- טוען מילים שמורות אם זה saved.html ---
-if (window.location.pathname.includes("saved.html")) {
-  window.onload = function () {
-    const container = document.getElementById("savedWordsList");
-    const savedWords = JSON.parse(localStorage.getItem("savedWords")) || [];
-
-    if (!savedWords.length) {
-      container.innerHTML = "<p>אין מילים שמורות.</p>";
-      return;
-    }
-
-    savedWords.forEach((word, index) => {
-      const div = document.createElement("div");
-      div.innerHTML = `
-        <p><strong>${word.english}</strong> - ${word.hebrew}<br><em>${word.sentence}</em></p>
-        <button onclick="deleteSavedWord(${index})">❌ מחק</button>
-        <hr>
-      `;
-      container.appendChild(div);
-    });
+  window.onload = () => {
+    setTimeout(() => {
+      loadPractice();
+    }, 500);
   };
-}
-
-function deleteSavedWord(index) {
-  let savedWords = JSON.parse(localStorage.getItem("savedWords")) || [];
-  savedWords.splice(index, 1);
-  localStorage.setItem("savedWords", JSON.stringify(savedWords));
-  location.reload(); // טוען מחדש את הדף כדי לעדכן את הרשימה
 }
