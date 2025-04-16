@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>תרגול אוצר מילים</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>לימוד אוצר מילים באנגלית</h1>
+
+  <div id="practice-container">
+    <h2 id="word"></h2>
+
+    <div id="choices"></div>
+
+    <p id="example-sentence"></p>
+
+    <p id="feedback" style="font-weight: bold;"></p>
+
+    <button onclick="nextWord()" id="nextBtn" style="display: none;">למילה הבאה</button>
+    <button onclick="goBack()">חזרה להזנת מילים</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
