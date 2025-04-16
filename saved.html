@@ -2,7 +2,6 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>מילים שמורות</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -40,7 +39,7 @@
         div.innerHTML = `
           <strong>אנגלית:</strong> ${word.english}<br>
           <strong>עברית:</strong> ${word.hebrew}<br>
-          <strong>משפט:</strong> ${word.sentence}<br>
+          <strong>משפט:</strong> ${word.example}<br>
           <div style="margin-top: 10px;">
             <button onclick="speakWord('${word.english.replace(/'/g, "\\'")}')">🔊 שמע</button>
             <button onclick="deleteWord(${index})">🗑️ מחק מילה זו</button>
@@ -84,7 +83,6 @@
     }
 
     window.onload = () => {
-      // לפעמים הקולות נטענים באיחור, לכן מוודאים זמינות:
       window.speechSynthesis.onvoiceschanged = () => {};
       loadSavedWords();
     };
