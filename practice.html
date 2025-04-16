@@ -5,25 +5,25 @@
   <title>תרגול אוצר מילים</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body onload="loadPracticeWords(); startClock();">
-  <div class="datetime" id="datetime"></div>
+<body onload="loadPracticeWords()">
   <h1>תרגול אוצר מילים</h1>
 
   <div id="practice-container">
-    <h2 id="word"></h2>
-    <div id="choices"></div>
-    <p id="example-sentence"></p>
-    <p id="feedback" style="font-weight: bold;"></p>
+	<h2 id="word"></h2>
+	<div id="choices"></div>
+	<p id="example-sentence"></p>
+	<p id="feedback" style="font-weight: bold;"></p>
 
-    <div class="bottom-buttons">
-      <button onclick="speakWord()">🔊 השמע</button>
-      <button onclick="saveCurrentWord()">⭐ שמור מילה</button>
-      <button onclick="nextWord()" id="nextBtn" style="display:none;">למילה הבאה</button>
-      <button onclick="goToSaved()">מילים שמורות</button>
-      <button onclick="goBack()">חזרה להזנת מילים</button>
-    </div>
+	<div class="bottom-buttons">
+  	<button onclick="speakWord()">🔊 השמע</button>
+  	<button onclick="saveCurrentWord()">⭐ שמור מילה</button>
+  	<button onclick="nextWord()" id="nextBtn" style="display:none;">למילה הבאה</button>
+  	<button onclick="goToSaved()">מילים שמורות</button>
+  	<button onclick="goBack()">חזרה להזנת מילים</button>
+	</div>
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
+
