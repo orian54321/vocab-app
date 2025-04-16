@@ -10,6 +10,7 @@
 
   <div id="practice-container">
     <h2 id="word"></h2>
+    <button onclick="speakWord()" id="speakBtn">🔊 השמע</button>
 
     <div id="choices"></div>
 
@@ -18,8 +19,8 @@
     <p id="feedback" style="font-weight: bold;"></p>
 
     <button onclick="nextWord()" id="nextBtn" style="display: none;">למילה הבאה</button>
+    <button onclick="goToSaved()">למילים שמורות</button>
     <button onclick="goBack()">חזרה להזנת מילים</button>
-    <button onclick="goToSaved()">מעבר למילים שמורות</button>
   </div>
 
   <script src="script.js"></script>
