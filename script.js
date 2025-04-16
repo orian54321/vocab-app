@@ -1,138 +1,160 @@
+let currentWordIndex = 0;
 let currentWord = null;
+let words = JSON.parse(localStorage.getItem("words")) || [];
+let savedWords = JSON.parse(localStorage.getItem("savedWords")) || [];
+let practiceList = [];
 
-document.addEventListener("DOMContentLoaded", () => {
-  if (location.pathname.endsWith("index.html") || location.pathname === "/" || location.pathname.endsWith("/")) {
-    document.getElementById("addWordForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const word = document.getElementById("wordInput").value.trim();
-      const translation = document.getElementById("translationInput").value.trim();
-      let sentence = document.getElementById("sentenceInput").value.trim();
-
-      if (!sentence) {
-        sentence = await generateSmartSentence(word);
-      }
-
-      const newWord = { word, translation, sentence };
-      const words = JSON.parse(localStorage.getItem("words")) || [];
-      words.push(newWord);
-      localStorage.setItem("words", JSON.stringify(words));
-      alert("המילה נוספה בהצלחה!");
-      e.target.reset();
-    });
-  }
-
-  if (location.pathname.endsWith("practice.html")) {
-    showPractice();
-  }
-
-  if (location.pathname.endsWith("saved.html")) {
-    displaySavedWords();
-  }
-});
-
-function getWords() {
-  return JSON.parse(localStorage.getItem("words")) || [];
+function goBack() {
+  window.location.href = "index.html";
 }
 
-function getSavedWords() {
-  return JSON.parse(localStorage.getItem("savedWords")) || [];
+function goToSaved() {
+  window.location.href = "saved.html";
 }
 
-function saveCurrentWord() {
-  if (!currentWord) return;
-  let saved = getSavedWords();
-  if (!saved.find(w => w.word === currentWord.word)) {
-    saved.push(currentWord);
-    localStorage.setItem("savedWords", JSON.stringify(saved));
-    alert("המילה נשמרה!");
-  } else {
-    alert("המילה כבר שמורה.");
-  }
+function goToPractice() {
+  window.location.href = "practice.html";
 }
 
 function speakWord() {
   if (!currentWord) return;
-  const utterance = new SpeechSynthesisUtterance(currentWord.word);
-  utterance.lang = 'en-US';
+  const utterance = new SpeechSynthesisUtterance(currentWord.english);
+  utterance.lang = "en-US";
+  utterance.voice = speechSynthesis.getVoices().find(v => v.name.includes("Female")) || null;
   utterance.rate = 1;
   speechSynthesis.speak(utterance);
 }
 
 async function generateSmartSentence(word) {
   try {
-    const response = await fetch(`https://api.datamuse.com/words?rel_trg=${word}`);
+    const response = await fetch(`https://api.datamuse.com/words?rel_trg=${encodeURIComponent(word)}&max=1`);
     const data = await response.json();
-    const related = data[0]?.word || "example";
-    return `This is a sentence using the word "${word}" with "${related}".`;
+    const related = data.length > 0 ? data[0].word : "context";
+    return `This sentence includes the word ___ and its context: ${related}.`;
   } catch (e) {
-    return `This is a sentence with the word "${word}".`;
+    return `This is a sentence with the word ___.`;
   }
 }
 
-async function showPractice() {
-  const words = getWords();
-  if (words.length === 0) {
-    document.getElementById("question").innerText = "אין מילים לתרגל.";
+async function addWord() {
+  const english = document.getElementById("englishWord").value.trim();
+  const hebrew = document.getElementById("hebrewWord").value.trim();
+  const sentenceInput = document.getElementById("exampleSentence").value.trim();
+
+  if (!english || !hebrew) {
+    alert("נא להזין גם מילה באנגלית וגם בעברית");
     return;
   }
 
-  const randomIndex = Math.floor(Math.random() * words.length);
-  const wordObj = words[randomIndex];
-  currentWord = wordObj;
+  const sentence = sentenceInput || await generateSmartSentence(english);
+  const wordData = { english, hebrew, sentence };
+  words.push(wordData);
+  localStorage.setItem("words", JSON.stringify(words));
 
-  const correct = wordObj.translation;
-  const options = [correct];
-  while (options.length < 4) {
-    const w = words[Math.floor(Math.random() * words.length)];
-    if (!options.includes(w.translation)) options.push(w.translation);
-  }
+  document.getElementById("englishWord").value = "";
+  document.getElementById("hebrewWord").value = "";
+  document.getElementById("exampleSentence").value = "";
 
-  options.sort(() => Math.random() - 0.5);
-  document.getElementById("question").innerText = `מה התרגום למילה: ${wordObj.word}?`;
-
-  const optionsDiv = document.getElementById("options");
-  optionsDiv.innerHTML = "";
-  options.forEach(opt => {
-    const btn = document.createElement("button");
-    btn.innerText = opt;
-    btn.onclick = () => {
-      alert(opt === correct ? "נכון!" : `לא נכון. התשובה היא: ${correct}`);
-      showPractice();
-    };
-    optionsDiv.appendChild(btn);
-  });
-
-  const sentenceDiv = document.getElementById("sentence");
-  sentenceDiv.innerText = wordObj.sentence ? `משפט: ${wordObj.sentence}` : `משפט: ${await generateSmartSentence(wordObj.word)}`;
+  alert("המילה נוספה בהצלחה!");
 }
 
-function displaySavedWords() {
-  const container = document.getElementById("foldersContainer");
-  const saved = getSavedWords();
-  container.innerHTML = "";
+function saveCurrentWord() {
+  if (!currentWord) return;
+  savedWords.push(currentWord);
+  localStorage.setItem("savedWords", JSON.stringify(savedWords));
+  alert("המילה נשמרה!");
+}
 
-  const folders = [];
-  for (let i = 0; i < saved.length; i += 50) {
-    folders.push(saved.slice(i, i + 50));
+function showWord(wordList) {
+  if (wordList.length === 0) {
+    document.getElementById("practice-container").innerHTML = "<p>לא נמצאו מילים לתרגול.</p>";
+    return;
   }
 
-  folders.forEach((folder, index) => {
-    const div = document.createElement("div");
-    div.innerHTML = `<h3>תיקייה ${index + 1}</h3>`;
-    folder.forEach((entry, i) => {
-      const wordLine = document.createElement("div");
-      wordLine.innerHTML = `<b>${entry.word}</b> - ${entry.translation}<br><i>${entry.sentence}</i>`;
-      const delBtn = document.createElement("button");
-      delBtn.innerText = "❌ מחק";
-      delBtn.onclick = () => {
-        const updated = getSavedWords().filter(w => w.word !== entry.word);
-        localStorage.setItem("savedWords", JSON.stringify(updated));
-        displaySavedWords();
-      };
-      wordLine.appendChild(delBtn);
-      div.appendChild(wordLine);
-      div.appendChild(document.createElement("hr"));
-    });
-    container.appendChild(div);
+  currentWordIndex = Math.floor(Math.random() * wordList.length);
+  currentWord = wordList[currentWordIndex];
+
+  document.getElementById("word").textContent = currentWord.english;
+  document.getElementById("example-sentence").textContent = currentWord.sentence.replace(currentWord.english, "___");
+
+  const choices = [currentWord.hebrew];
+  while (choices.length < 4 && words.length >= 4) {
+    const rand = words[Math.floor(Math.random() * words.length)];
+    if (!choices.includes(rand.hebrew)) choices.push(rand.hebrew);
+  }
+
+  shuffleArray(choices);
+
+  const choicesDiv = document.getElementById("choices");
+  choicesDiv.innerHTML = "";
+
+  choices.forEach(choice => {
+    const btn = document.createElement("button");
+    btn.textContent = choice;
+    btn.onclick = () => checkAnswer(choice);
+    choicesDiv.appendChild(btn);
   });
+
+  document.getElementById("feedback").textContent = "";
+  document.getElementById("nextBtn").style.display = "none";
+}
+
+function checkAnswer(choice) {
+  const feedback = document.getElementById("feedback");
+  if (choice === currentWord.hebrew) {
+    feedback.textContent = "נכון!";
+    feedback.style.color = "green";
+  } else {
+    feedback.textContent = `שגוי. התשובה הנכונה היא: ${currentWord.hebrew}`;
+    feedback.style.color = "red";
+  }
+  document.getElementById("nextBtn").style.display = "inline-block";
+}
+
+function nextWord() {
+  showWord(practiceList);
+}
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+function loadPracticeWords(fromSaved = false) {
+  practiceList = fromSaved ? savedWords : words;
+  showWord(practiceList);
+}
+
+async function importFromExcel() {
+  const fileInput = document.getElementById("excelFile");
+  const file = fileInput.files[0];
+  if (!file) {
+    alert("נא לבחור קובץ Excel");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async function (e) {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: "array" });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      if (!row[0] || !row[1]) continue;
+
+      const english = row[0].toString().trim();
+      const hebrew = row[1].toString().trim();
+      const sentence = row[2] ? row[2].toString().trim() : await generateSmartSentence(english);
+
+      words.push({ english, hebrew, sentence });
+    }
+
+    localStorage.setItem("words", JSON.stringify(words));
+    alert("הייבוא הסתיים בהצלחה!");
+  };
+  reader.readAsArrayBuffer(file);
 }
