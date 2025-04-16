@@ -1,23 +1,30 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>אוצר מילים - דף ראשי</title>
+  <title>הזנת מילים</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
-  <h1>אפליקציית לימוד אוצר מילים</h1>
+  <h1>הזנת מילים באנגלית</h1>
 
-  <button onclick="location.href='practice.html'">מעבר לתרגול</button>
-  <button onclick="location.href='saved.html'">מעבר למילים שמורות</button>
+  <label>מילה באנגלית:</label>
+  <input type="text" id="englishWord"><br>
 
-  <h2>הוסף מילה חדשה</h2>
-  <form id="addWordForm">
-    <input type="text" id="wordInput" placeholder="מילה באנגלית" required>
-    <input type="text" id="translationInput" placeholder="תרגום לעברית" required>
-    <input type="text" id="sentenceInput" placeholder="משפט דוגמה (רשות)">
-    <button type="submit">הוסף</button>
-  </form>
+  <label>תרגום לעברית:</label>
+  <input type="text" id="hebrewWord"><br>
+
+  <label>משפט דוגמה (לא חובה):</label>
+  <input type="text" id="exampleSentence"><br><br>
+
+  <button onclick="addWord()">הוסף מילה</button>
+  <button onclick="goToPractice()">מעבר לתרגול</button>
+  <button onclick="goToSaved()">מעבר למילים שמורות</button>
+
+  <h3>ייבוא מילים מקובץ Excel</h3>
+  <input type="file" id="excelFile">
+  <button onclick="importFromExcel()">ייבא קובץ</button>
 
   <script src="script.js"></script>
 </body>
