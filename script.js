@@ -12,6 +12,10 @@ function goToSaved() {
   window.location.href = "saved.html";
 }
 
+function goToPractice() {
+  window.location.href = "practice.html";
+}
+
 function speakWord() {
   if (!currentWord) return;
   const utterance = new SpeechSynthesisUtterance(currentWord.english);
@@ -121,33 +125,6 @@ function shuffleArray(array) {
 function loadPracticeWords(fromSaved = false) {
   practiceList = fromSaved ? savedWords : words;
   showWord(practiceList);
-}
-
-function loadSavedWords() {
-  const container = document.getElementById("savedWordsContainer");
-  container.innerHTML = "";
-
-  if (savedWords.length === 0) {
-    container.innerHTML = "<p>אין מילים שמורות</p>";
-    return;
-  }
-
-  savedWords.forEach((word, index) => {
-    const div = document.createElement("div");
-    div.className = "saved-word";
-    div.innerHTML = `
-      <strong>${word.english}</strong> - ${word.hebrew}<br/>
-      <em>${word.sentence}</em><br/>
-      <button onclick="deleteSavedWord(${index})">🗑️ מחק</button>
-    `;
-    container.appendChild(div);
-  });
-}
-
-function deleteSavedWord(index) {
-  savedWords.splice(index, 1);
-  localStorage.setItem("savedWords", JSON.stringify(savedWords));
-  loadSavedWords();
 }
 
 async function importFromExcel() {
