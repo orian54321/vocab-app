@@ -7,10 +7,31 @@
 </head>
 <body>
   <h1>מילים שמורות</h1>
-  <div id="folders"></div>
-
+  <div id="savedWordsContainer"></div>
+  <br>
   <button onclick="goBack()">חזרה להזנת מילים</button>
 
-  <script src="script.js"></script>
+  <script>
+    function goBack() {
+      window.location.href = "index.html";
+    }
+
+    function loadSavedWords() {
+      const words = JSON.parse(localStorage.getItem("words")) || [];
+      if (words.length === 0) {
+        document.getElementById("savedWordsContainer").innerHTML = "<p>אין מילים שמורות עדיין.</p>";
+        return;
+      }
+
+      let html = "<table border='1' style='border-collapse: collapse;'><tr><th>אנגלית</th><th>עברית</th><th>משפט</th></tr>";
+      words.forEach(word => {
+        html += `<tr><td>${word.english}</td><td>${word.hebrew}</td><td>${word.sentence}</td></tr>`;
+      });
+      html += "</table>";
+      document.getElementById("savedWordsContainer").innerHTML = html;
+    }
+
+    window.onload = loadSavedWords;
+  </script>
 </body>
 </html>
