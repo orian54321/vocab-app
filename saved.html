@@ -1,26 +1,62 @@
-body {
-  direction: rtl;
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  background-color: #f5f5f5;
-}
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>מילים שמורות</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>מילים שמורות</h1>
 
-h1, h2 {
-  color: #2c3e50;
-}
+  <div id="saved-words"></div>
 
-button {
-  margin: 5px;
-  padding: 10px;
-  font-size: 16px;
-  cursor: pointer;
-}
+  <br>
+  <button onclick="goBack()">חזרה להזנת מילים</button>
+  <button onclick="goToPractice()">מעבר לתרגול</button>
 
-input {
-  margin: 5px;
-  padding: 5px;
-}
+  <script>
+    function loadSavedWords() {
+      const container = document.getElementById("saved-words");
+      const words = JSON.parse(localStorage.getItem("savedWords")) || [];
 
-.bottom-buttons {
-  margin-top: 20px;
-}
+      if (words.length === 0) {
+        container.innerHTML = "<p>אין מילים שמורות.</p>";
+        return;
+      }
+
+      words.forEach((word, index) => {
+        const div = document.createElement("div");
+        div.style.border = "1px solid #ccc";
+        div.style.padding = "10px";
+        div.style.margin = "10px";
+
+        div.innerHTML = `
+          <strong>אנגלית:</strong> ${word.english}<br>
+          <strong>עברית:</strong> ${word.hebrew}<br>
+          <strong>משפט:</strong> ${word.sentence}<br>
+          <button onclick="deleteWord(${index})">מחק מילה זו</button>
+        `;
+
+        container.appendChild(div);
+      });
+    }
+
+    function deleteWord(index) {
+      const words = JSON.parse(localStorage.getItem("savedWords")) || [];
+      words.splice(index, 1);
+      localStorage.setItem("savedWords", JSON.stringify(words));
+      location.reload();
+    }
+
+    function goBack() {
+      window.location.href = "index.html";
+    }
+
+    function goToPractice() {
+      window.location.href = "practice.html";
+    }
+
+    window.onload = loadSavedWords;
+  </script>
+</body>
+</html>
