@@ -27,16 +27,19 @@ function addWord() {
   document.getElementById("exampleSentence").value = "";
 }
 
+// מעבר למסך התרגול
 function goToPractice() {
   window.location.href = "practice.html";
 }
 
-function goBack() {
-  window.location.href = "index.html";
-}
-
+// מעבר למסך מילים שמורות
 function goToSaved() {
   window.location.href = "saved.html";
+}
+
+// חזרה למסך הראשי
+function goBack() {
+  window.location.href = "index.html";
 }
 
 // --- פונקציות תרגול ---
