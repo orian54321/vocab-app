@@ -1,3 +1,4 @@
+// --- פונקציה להוספת מילה חדשה ---
 function addWord() {
   const english = document.getElementById("englishWord").value.trim();
   const hebrew = document.getElementById("hebrewWord").value.trim();
@@ -8,7 +9,7 @@ function addWord() {
     return;
   }
 
-  const example = sentence || `This is a sample sentence with the word ${english}.`;
+  const example = sentence || `This is a sentence with the word ${english}.`;
 
   const wordData = {
     english,
@@ -28,4 +29,80 @@ function addWord() {
 
 function goToPractice() {
   window.location.href = "practice.html";
+}
+
+function goBack() {
+  window.location.href = "index.html";
+}
+
+// --- פונקציות תרגול ---
+let currentWord = null;
+let remainingWords = [];
+
+function loadPractice() {
+  const allWords = JSON.parse(localStorage.getItem("words")) || [];
+
+  if (allWords.length === 0) {
+    document.getElementById("practice-container").innerHTML = "<p>אין מילים לתרגול. חזור להזנה.</p>";
+    return;
+  }
+
+  remainingWords = [...allWords];
+  showNextWord();
+}
+
+function showNextWord() {
+  document.getElementById("feedback").innerText = "";
+  document.getElementById("nextBtn").style.display = "none";
+  document.getElementById("choices").innerHTML = "";
+
+  if (remainingWords.length === 0) {
+    document.getElementById("practice-container").innerHTML = "<p>סיימת את כל המילים!</p><button onclick='goBack()'>חזרה</button>";
+    return;
+  }
+
+  const index = Math.floor(Math.random() * remainingWords.length);
+  currentWord = remainingWords[index];
+  remainingWords.splice(index, 1);
+
+  document.getElementById("word").innerText = currentWord.english;
+
+  const choices = generateChoices(currentWord);
+  choices.forEach(choice => {
+    const btn = document.createElement("button");
+    btn.innerText = choice;
+    btn.onclick = () => checkAnswer(choice);
+    btn.style.margin = "10px";
+    btn.style.display = "block";
+    document.getElementById("choices").appendChild(btn);
+  });
+
+  const sentenceWithBlank = currentWord.sentence.replace(currentWord.english, "_____");
+  document.getElementById("example-sentence").innerText = sentenceWithBlank;
+}
+
+function generateChoices(correctWord) {
+  const allWords = JSON.parse(localStorage.getItem("words")) || [];
+  const incorrect = allWords.filter(w => w.hebrew !== correctWord.hebrew);
+  let shuffled = incorrect.sort(() => 0.5 - Math.random()).slice(0, 3);
+  shuffled.push(correctWord);
+  return shuffled.sort(() => 0.5 - Math.random()).map(w => w.hebrew);
+}
+
+function checkAnswer(selected) {
+  if (selected === currentWord.hebrew) {
+    document.getElementById("feedback").innerText = "✔ נכון!";
+    document.getElementById("nextBtn").style.display = "inline-block";
+  } else {
+    document.getElementById("feedback").innerText = "❌ לא נכון, נסה שוב.";
+  }
+}
+
+function nextWord() {
+  showNextWord();
+}
+
+// טוען את התרגול רק במסך practice
+if (window.location.pathname.includes("practice.html")) {
+  window.onload = loadPractice;
 }
