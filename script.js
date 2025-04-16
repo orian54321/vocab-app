@@ -60,9 +60,15 @@ async function addWord() {
 
 function saveCurrentWord() {
   if (!currentWord) return;
-  savedWords.push(currentWord);
-  localStorage.setItem("savedWords", JSON.stringify(savedWords));
-  alert("המילה נשמרה!");
+
+  const alreadySaved = savedWords.some(w => w.english === currentWord.english);
+  if (!alreadySaved) {
+    savedWords.push(currentWord);
+    localStorage.setItem("savedWords", JSON.stringify(savedWords));
+    alert("המילה נשמרה!");
+  } else {
+    alert("המילה כבר קיימת ברשימת המילים השמורות.");
+  }
 }
 
 function showWord(wordList) {
