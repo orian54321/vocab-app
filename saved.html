@@ -1,62 +1,93 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>מילים שמורות</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>מילים שמורות</h1>
-
-  <div id="saved-words"></div>
-
+  <div id="savedWordsContainer"></div>
   <br>
-  <button onclick="goBack()">חזרה להזנת מילים</button>
-  <button onclick="goToPractice()">מעבר לתרגול</button>
+  <button onclick="window.location.href='index.html'">חזרה לדף הראשי</button>
 
   <script>
     function loadSavedWords() {
-      const container = document.getElementById("saved-words");
-      const words = JSON.parse(localStorage.getItem("savedWords")) || [];
+      const container = document.getElementById("savedWordsContainer");
+      container.innerHTML = "";
 
-      if (words.length === 0) {
-        container.innerHTML = "<p>אין מילים שמורות.</p>";
+      let allSavedWords = [];
+      const numFolders = 30;
+
+      for (let i = 1; i <= numFolders; i++) {
+        const folderKey = `savedWordsFolder${i}`;
+        const wordsJSON = localStorage.getItem(folderKey);
+        if (wordsJSON) {
+          const wordsArray = JSON.parse(wordsJSON);
+          allSavedWords = allSavedWords.concat(wordsArray.map(word => ({ ...word, folder: i })));
+        }
+      }
+
+      if (allSavedWords.length === 0) {
+        container.innerHTML = "<p>לא נשמרו מילים.</p>";
         return;
       }
 
-      words.forEach((word, index) => {
+      allSavedWords.forEach((word, index) => {
         const div = document.createElement("div");
-        div.style.border = "1px solid #ccc";
-        div.style.padding = "10px";
-        div.style.margin = "10px";
-
+        div.className = "word-box";
         div.innerHTML = `
           <strong>אנגלית:</strong> ${word.english}<br>
           <strong>עברית:</strong> ${word.hebrew}<br>
           <strong>משפט:</strong> ${word.sentence}<br>
-          <button onclick="deleteWord(${index})">מחק מילה זו</button>
+          <div style="margin-top: 10px;">
+            <button onclick="speakWord('${word.english.replace(/'/g, "\\'")}')">🔊 שמע</button>
+            <button onclick="deleteWord(${index})">🗑️ מחק מילה זו</button>
+          </div>
         `;
-
         container.appendChild(div);
       });
     }
 
-    function deleteWord(index) {
-      const words = JSON.parse(localStorage.getItem("savedWords")) || [];
-      words.splice(index, 1);
-      localStorage.setItem("savedWords", JSON.stringify(words));
-      location.reload();
+    function deleteWord(globalIndex) {
+      let allSavedWords = [];
+      const numFolders = 30;
+
+      for (let i = 1; i <= numFolders; i++) {
+        const folderKey = `savedWordsFolder${i}`;
+        const wordsJSON = localStorage.getItem(folderKey);
+        if (wordsJSON) {
+          const wordsArray = JSON.parse(wordsJSON);
+          allSavedWords = allSavedWords.concat(wordsArray.map(word => ({ ...word, folder: i })));
+        }
+      }
+
+      const wordToDelete = allSavedWords[globalIndex];
+      if (!wordToDelete) return;
+
+      const folderKey = `savedWordsFolder${wordToDelete.folder}`;
+      let folderWords = JSON.parse(localStorage.getItem(folderKey)) || [];
+      folderWords = folderWords.filter(word => word.english !== wordToDelete.english);
+      localStorage.setItem(folderKey, JSON.stringify(folderWords));
+
+      loadSavedWords();
     }
 
-    function goBack() {
-      window.location.href = "index.html";
+    function speakWord(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "en-US";
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      utterance.voice = speechSynthesis.getVoices().find(v => v.lang === "en-US" && v.name.includes("Female")) || null;
+      speechSynthesis.speak(utterance);
     }
 
-    function goToPractice() {
-      window.location.href = "practice.html";
-    }
-
-    window.onload = loadSavedWords;
+    window.onload = () => {
+      // לפעמים הקולות נטענים באיחור, לכן מוודאים זמינות:
+      window.speechSynthesis.onvoiceschanged = () => {};
+      loadSavedWords();
+    };
   </script>
 </body>
 </html>
