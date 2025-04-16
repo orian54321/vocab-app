@@ -1,23 +1,42 @@
 let words = JSON.parse(localStorage.getItem("words")) || [];
-let currentIndex = 0;
+let currentIndex = parseInt(localStorage.getItem("currentIndex")) || 0;
 
-function saveWords() {
-  const input = document.getElementById("words-input").value;
-  const lines = input.split("\n");
-  lines.forEach(line => {
-    const parts = line.split("-");
-    if (parts.length === 3) {
-      const word = {
-        english: parts[0].trim(),
-        hebrew: parts[1].trim(),
-        sentence: parts[2].trim()
-      };
-      words.push(word);
-    }
-  });
+function generateSentence(word) {
+  const templates = [
+    `I like to use the word "${word}" every day.`,
+    `Can you spell the word "${word}"?`,
+    `The word "${word}" is very useful.`,
+    `Do you know what "${word}" means?`,
+    `Let’s practice using "${word}" in a sentence.`
+  ];
+  const randomIndex = Math.floor(Math.random() * templates.length);
+  return templates[randomIndex];
+}
+
+function saveWord() {
+  const english = document.getElementById("english-word").value.trim();
+  const hebrew = document.getElementById("hebrew-word").value.trim();
+  let sentence = document.getElementById("example-sentence").value.trim();
+
+  if (!english || !hebrew) {
+    alert("יש להזין מילה באנגלית ותרגום לעברית.");
+    return;
+  }
+
+  if (!sentence) {
+    sentence = generateSentence(english);
+  }
+
+  const word = { english, hebrew, sentence };
+  words.push(word);
   localStorage.setItem("words", JSON.stringify(words));
-  alert("המילים נשמרו!");
-  document.getElementById("words-input").value = "";
+  alert("המילה נשמרה!");
+
+  // איפוס השדות
+  document.getElementById("english-word").value = "";
+  document.getElementById("hebrew-word").value = "";
+  document.getElementById("example-sentence").value = "";
+
   startQuiz();
 }
 
@@ -38,7 +57,7 @@ function showQuestion() {
 
   const correct = word.hebrew;
   const options = [correct];
-  while (options.length < 4) {
+  while (options.length < 4 && words.length >= 4) {
     const rand = words[Math.floor(Math.random() * words.length)];
     if (!options.includes(rand.hebrew)) {
       options.push(rand.hebrew);
@@ -78,12 +97,14 @@ function playAudio() {
   speechSynthesis.speak(utterance);
 }
 
-function saveWord() {
+function saveToFolder() {
   alert("(כאן בעתיד תתווסף פונקציה לשמירת מילה לתיקיית מילים שמורות)");
 }
 
-// המשך מהמקום האחרון
 window.onload = () => {
-  const savedIndex = localStorage.getItem("currentIndex");
-  if (savedIndex) currentIndex = parseInt(savedIndex);
+  if (words.length > 0) {
+    const savedIndex = localStorage.getItem("currentIndex");
+    if (savedIndex) currentIndex = parseInt(savedIndex);
+    startQuiz();
+  }
 };
