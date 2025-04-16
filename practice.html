@@ -5,8 +5,8 @@
   <title>תרגול אוצר מילים</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <h1>לימוד אוצר מילים באנגלית</h1>
+<body onload="loadPracticeWords()">
+  <h1>תרגול אוצר מילים</h1>
 
   <div id="practice-container">
     <h2 id="word"></h2>
@@ -17,10 +17,10 @@
 
     <p id="feedback" style="font-weight: bold;"></p>
 
-    <div style="margin-top: 20px;">
+    <div class="bottom-buttons">
       <button onclick="speakWord()">🔊 השמע</button>
       <button onclick="saveCurrentWord()">⭐ שמור מילה</button>
-      <button onclick="nextWord()" id="nextBtn" style="display: none;">למילה הבאה</button>
+      <button onclick="nextWord()" id="nextBtn" style="display:none;">למילה הבאה</button>
       <button onclick="goToSaved()">מילים שמורות</button>
       <button onclick="goBack()">חזרה להזנת מילים</button>
     </div>
