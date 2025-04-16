@@ -1,8 +1,6 @@
-// טעינת מילים מה-localStorage
 let words = JSON.parse(localStorage.getItem("words")) || [];
 let currentWord = null;
 
-// הוספת מילה חדשה
 function addWord() {
   const english = document.getElementById("englishWord").value.trim();
   const hebrew = document.getElementById("hebrewWord").value.trim();
@@ -27,7 +25,6 @@ function addWord() {
   document.getElementById("exampleSentence").value = "";
 }
 
-// ייבוא מקובץ Excel
 function importFromExcel() {
   const fileInput = document.getElementById('excelFile');
   const file = fileInput.files[0];
@@ -40,8 +37,7 @@ function importFromExcel() {
   reader.onload = function (e) {
     const data = new Uint8Array(e.target.result);
     const workbook = XLSX.read(data, { type: 'array' });
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
     for (let i = 1; i < rows.length; i++) {
@@ -63,43 +59,24 @@ function importFromExcel() {
   reader.readAsArrayBuffer(file);
 }
 
-// מעבר בין דפים
 function goToPractice() {
   window.location.href = "practice.html";
 }
-
 function goToSaved() {
   window.location.href = "saved.html";
 }
-
 function goBack() {
   window.location.href = "index.html";
 }
 
-// בדיקת קיום מילה
 function checkIfWordExists() {
-  const input = document.getElementById("checkWord");
+  const wordToCheck = document.getElementById("checkWord").value.trim().toLowerCase();
   const result = document.getElementById("checkResult");
-  const wordToCheck = input.value.trim().toLowerCase();
-
-  if (!wordToCheck) {
-    result.textContent = "נא להזין מילה לבדיקה.";
-    result.style.color = "black";
-    return;
-  }
-
   const exists = words.some(w => w.english.toLowerCase() === wordToCheck);
-
-  if (exists) {
-    result.textContent = "המילה שמורה.";
-    result.style.color = "green";
-  } else {
-    result.textContent = "המילה אינה שמורה.";
-    result.style.color = "red";
-  }
+  result.textContent = exists ? "המילה שמורה." : "המילה אינה שמורה.";
+  result.style.color = exists ? "green" : "red";
 }
 
-// תרגול - טעינת מילה אקראית
 function loadPracticeWords() {
   if (words.length === 0) {
     document.getElementById("practice-container").innerHTML = "<p>אין מילים לתרגול.</p>";
@@ -109,10 +86,8 @@ function loadPracticeWords() {
   const randomIndex = Math.floor(Math.random() * words.length);
   currentWord = words[randomIndex];
 
-  // הצגת המילה באנגלית
   document.getElementById("word").textContent = currentWord.english;
 
-  // יצירת אפשרויות תרגום
   const choices = [currentWord.hebrew];
   while (choices.length < 4 && words.length > 1) {
     const randomChoice = words[Math.floor(Math.random() * words.length)].hebrew;
@@ -122,8 +97,6 @@ function loadPracticeWords() {
   }
 
   shuffleArray(choices);
-
-  // הצגת הכפתורים
   const choicesDiv = document.getElementById("choices");
   choicesDiv.innerHTML = "";
   choices.forEach(choice => {
@@ -133,47 +106,48 @@ function loadPracticeWords() {
     choicesDiv.appendChild(btn);
   });
 
-  // משפט עם מקום ריק
-  const sentence = currentWord.example.replace(new RegExp(currentWord.english, "gi"), "_____");
-  document.getElementById("example-sentence").textContent = sentence;
-
-  // ניקוי פידבק
+  document.getElementById("example-sentence").textContent = currentWord.example.replace(new RegExp(currentWord.english, "gi"), "_____");
   document.getElementById("feedback").textContent = "";
   document.getElementById("nextBtn").style.display = "none";
 }
 
-// בדיקת תשובה
 function checkAnswer(selected) {
+  const feedback = document.getElementById("feedback");
   if (selected === currentWord.hebrew) {
-    document.getElementById("feedback").textContent = "נכון! ✅";
+    feedback.textContent = "נכון! ✅";
   } else {
-    document.getElementById("feedback").textContent = `שגוי. התשובה הנכונה היא: ${currentWord.hebrew}`;
+    feedback.textContent = `שגוי. התשובה הנכונה היא: ${currentWord.hebrew}`;
   }
-
   document.getElementById("nextBtn").style.display = "inline-block";
 }
 
-// מעבר למילה הבאה
 function nextWord() {
   loadPracticeWords();
 }
 
-// שמירת מילה נוכחית לרשימת מילים שמורות
 function saveCurrentWord() {
   if (!currentWord) return;
 
-  let savedWords = JSON.parse(localStorage.getItem("savedWords")) || [];
+  for (let i = 1; i <= 30; i++) {
+    const key = `savedWordsFolder${i}`;
+    let folder = JSON.parse(localStorage.getItem(key)) || [];
 
-  if (!savedWords.some(w => w.english === currentWord.english)) {
-    savedWords.push(currentWord);
-    localStorage.setItem("savedWords", JSON.stringify(savedWords));
-    alert("המילה נוספה לרשימת מילים שמורות!");
-  } else {
-    alert("המילה כבר קיימת ברשימת מילים שמורות.");
+    if (folder.some(w => w.english === currentWord.english)) {
+      alert("המילה כבר קיימת ברשימת מילים שמורות.");
+      return;
+    }
+
+    if (folder.length < 50) {
+      folder.push(currentWord);
+      localStorage.setItem(key, JSON.stringify(folder));
+      alert("המילה נוספה לתיקייה שמורה.");
+      return;
+    }
   }
+
+  alert("כל התיקיות מלאות (30 תיקיות של 50 מילים).");
 }
 
-// השמעת מילה באנגלית
 function speakWord() {
   if (!currentWord) return;
 
@@ -185,10 +159,9 @@ function speakWord() {
   speechSynthesis.speak(utterance);
 }
 
-// ערבוב מערך (לשאלות)
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
-	const j = Math.floor(Math.random() * (i + 1));
-	[array[i], array[j]] = [array[j], array[i]];
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
 }
