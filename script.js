@@ -73,31 +73,25 @@ function goToSaved() {
   window.location.href = "saved.html";
 }
 
-// בדיקת קיום מילה במערכת
-document.addEventListener("DOMContentLoaded", () => {
-  const checkInput = document.getElementById("checkWord");
-  const resultPara = document.getElementById("checkResult");
+// פונקציה לבדיקת מילה
+function checkIfWordExists() {
+  const input = document.getElementById("checkWord");
+  const result = document.getElementById("checkResult");
+  const wordToCheck = input.value.trim().toLowerCase();
 
-  if (checkInput) {
-    checkInput.addEventListener("keydown", function (event) {
-      if (event.key === "Enter") {
-        const wordToCheck = checkInput.value.trim().toLowerCase();
-        if (!wordToCheck) {
-          resultPara.textContent = "נא להזין מילה לבדיקה.";
-          resultPara.style.color = "black";
-          return;
-        }
-
-        const exists = words.some(w => w.english.toLowerCase() === wordToCheck);
-
-        if (exists) {
-          resultPara.textContent = "המילה שמורה.";
-          resultPara.style.color = "green";
-        } else {
-          resultPara.textContent = "המילה אינה שמורה.";
-          resultPara.style.color = "red";
-        }
-      }
-    });
+  if (!wordToCheck) {
+    result.textContent = "נא להזין מילה לבדיקה.";
+    result.style.color = "black";
+    return;
   }
-});
+
+  const exists = words.some(w => w.english.toLowerCase() === wordToCheck);
+
+  if (exists) {
+    result.textContent = "המילה שמורה.";
+    result.style.color = "green";
+  } else {
+    result.textContent = "המילה אינה שמורה.";
+    result.style.color = "red";
+  }
+}
