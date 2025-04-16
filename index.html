@@ -8,11 +8,19 @@
 <body>
   <h1>לימוד אוצר מילים באנגלית</h1>
 
-  <!-- טופס להזנת מילים -->
+  <!-- טופס להזנת מילה אחת -->
   <section id="input-section">
-    <h2>הזנת מילים</h2>
-    <textarea id="words-input" placeholder="הכנס מילים בפורמט: מילה באנגלית - פירוש בעברית - משפט דוגמה... שורה לכל מילה"></textarea>
-    <button onclick="saveWords()">שמור מילים</button>
+    <h2>הזנת מילה</h2>
+    <label>מילה באנגלית:</label><br>
+    <input type="text" id="english-word"><br><br>
+
+    <label>תרגום לעברית:</label><br>
+    <input type="text" id="hebrew-word"><br><br>
+
+    <label>משפט דוגמה באנגלית (לא חובה):</label><br>
+    <input type="text" id="example-sentence"><br><br>
+
+    <button onclick="saveWord()">שמור מילה</button>
   </section>
 
   <!-- תרגול מילים -->
@@ -22,7 +30,7 @@
     <div id="quiz-options"></div>
     <div id="quiz-sentence"></div>
     <button onclick="playAudio()">🔊 שמע את המילה</button>
-    <button onclick="saveWord()">⭐ שמור מילה</button>
+    <button onclick="saveToFolder()">⭐ שמור מילה</button>
   </section>
 
   <script src="script.js"></script>
