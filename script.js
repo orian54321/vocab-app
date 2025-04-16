@@ -1,166 +1,103 @@
-let currentWordIndex = 0;
-let currentWord = null;
+// טעינת מילים מה-localStorage
 let words = JSON.parse(localStorage.getItem("words")) || [];
-let savedWords = JSON.parse(localStorage.getItem("savedWords")) || [];
-let practiceList = [];
 
-function goBack() {
-  window.location.href = "index.html";
-}
-
-function goToSaved() {
-  window.location.href = "saved.html";
-}
-
-function goToPractice() {
-  window.location.href = "practice.html";
-}
-
-function speakWord() {
-  if (!currentWord) return;
-  const utterance = new SpeechSynthesisUtterance(currentWord.english);
-  utterance.lang = "en-US";
-  utterance.voice = speechSynthesis.getVoices().find(v => v.name.includes("Female")) || null;
-  utterance.rate = 1;
-  speechSynthesis.speak(utterance);
-}
-
-async function generateSmartSentence(word) {
-  try {
-    const response = await fetch(`https://api.datamuse.com/words?rel_trg=${encodeURIComponent(word)}&max=1`);
-    const data = await response.json();
-    const related = data.length > 0 ? data[0].word : "context";
-    return `This sentence includes the word ___ and its context: ${related}.`;
-  } catch (e) {
-    return `This is a sentence with the word ___.`;
-  }
-}
-
-async function addWord() {
+// הוספת מילה חדשה
+function addWord() {
   const english = document.getElementById("englishWord").value.trim();
   const hebrew = document.getElementById("hebrewWord").value.trim();
-  const sentenceInput = document.getElementById("exampleSentence").value.trim();
+  let example = document.getElementById("exampleSentence").value.trim();
 
   if (!english || !hebrew) {
-    alert("נא להזין גם מילה באנגלית וגם בעברית");
+    alert("נא למלא את שני השדות: מילה באנגלית ותרגום לעברית.");
     return;
   }
 
-  const sentence = sentenceInput || await generateSmartSentence(english);
-  const wordData = { english, hebrew, sentence };
-  words.push(wordData);
-  localStorage.setItem("words", JSON.stringify(words));
+  if (!example) {
+    example = `I like the word "${english}" in a sentence.`;
+  }
 
+  const newWord = { english, hebrew, example };
+  words.push(newWord);
+  localStorage.setItem("words", JSON.stringify(words));
+  alert("המילה נוספה בהצלחה!");
+
+  // ניקוי שדות
   document.getElementById("englishWord").value = "";
   document.getElementById("hebrewWord").value = "";
   document.getElementById("exampleSentence").value = "";
-
-  alert("המילה נוספה בהצלחה!");
 }
 
-function saveCurrentWord() {
-  if (!currentWord) return;
-
-  const alreadySaved = savedWords.some(w => w.english === currentWord.english);
-  if (!alreadySaved) {
-    savedWords.push(currentWord);
-    localStorage.setItem("savedWords", JSON.stringify(savedWords));
-    alert("המילה נשמרה!");
-  } else {
-    alert("המילה כבר קיימת ברשימת המילים השמורות.");
-  }
-}
-
-function showWord(wordList) {
-  if (wordList.length === 0) {
-    document.getElementById("practice-container").innerHTML = "<p>לא נמצאו מילים לתרגול.</p>";
-    return;
-  }
-
-  currentWordIndex = Math.floor(Math.random() * wordList.length);
-  currentWord = wordList[currentWordIndex];
-
-  document.getElementById("word").textContent = currentWord.english;
-  document.getElementById("example-sentence").textContent = currentWord.sentence.replace(currentWord.english, "___");
-
-  const choices = [currentWord.hebrew];
-  while (choices.length < 4 && words.length >= 4) {
-    const rand = words[Math.floor(Math.random() * words.length)];
-    if (!choices.includes(rand.hebrew)) choices.push(rand.hebrew);
-  }
-
-  shuffleArray(choices);
-
-  const choicesDiv = document.getElementById("choices");
-  choicesDiv.innerHTML = "";
-
-  choices.forEach(choice => {
-    const btn = document.createElement("button");
-    btn.textContent = choice;
-    btn.onclick = () => checkAnswer(choice);
-    choicesDiv.appendChild(btn);
-  });
-
-  document.getElementById("feedback").textContent = "";
-  document.getElementById("nextBtn").style.display = "none";
-}
-
-function checkAnswer(choice) {
-  const feedback = document.getElementById("feedback");
-  if (choice === currentWord.hebrew) {
-    feedback.textContent = "נכון!";
-    feedback.style.color = "green";
-  } else {
-    feedback.textContent = `שגוי. התשובה הנכונה היא: ${currentWord.hebrew}`;
-    feedback.style.color = "red";
-  }
-  document.getElementById("nextBtn").style.display = "inline-block";
-}
-
-function nextWord() {
-  showWord(practiceList);
-}
-
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-}
-
-function loadPracticeWords(fromSaved = false) {
-  practiceList = fromSaved ? savedWords : words;
-  showWord(practiceList);
-}
-
-async function importFromExcel() {
-  const fileInput = document.getElementById("excelFile");
+// ייבוא מקובץ Excel
+function importFromExcel() {
+  const fileInput = document.getElementById('excelFile');
   const file = fileInput.files[0];
   if (!file) {
-    alert("נא לבחור קובץ Excel");
+    alert("בחר קובץ Excel תחילה.");
     return;
   }
 
   const reader = new FileReader();
-  reader.onload = async function (e) {
+  reader.onload = function (e) {
     const data = new Uint8Array(e.target.result);
-    const workbook = XLSX.read(data, { type: "array" });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const workbook = XLSX.read(data, { type: 'array' });
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
     const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
     for (let i = 1; i < rows.length; i++) {
-      const row = rows[i];
-      if (!row[0] || !row[1]) continue;
-
-      const english = row[0].toString().trim();
-      const hebrew = row[1].toString().trim();
-      const sentence = row[2] ? row[2].toString().trim() : await generateSmartSentence(english);
-
-      words.push({ english, hebrew, sentence });
+      const [english, hebrew, example] = rows[i];
+      if (english && hebrew) {
+        words.push({
+          english: english.trim(),
+          hebrew: hebrew.trim(),
+          example: example ? example.trim() : `I like the word "${english}" in a sentence.`
+        });
+      }
     }
 
     localStorage.setItem("words", JSON.stringify(words));
     alert("הייבוא הסתיים בהצלחה!");
+    fileInput.value = "";
   };
+
   reader.readAsArrayBuffer(file);
 }
+
+// מעבר לתרגול
+function goToPractice() {
+  window.location.href = "practice.html";
+}
+
+// מעבר למילים שמורות
+function goToSaved() {
+  window.location.href = "saved.html";
+}
+
+// בדיקת קיום מילה במערכת
+document.addEventListener("DOMContentLoaded", () => {
+  const checkInput = document.getElementById("checkWord");
+  const resultPara = document.getElementById("checkResult");
+
+  if (checkInput) {
+    checkInput.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        const wordToCheck = checkInput.value.trim().toLowerCase();
+        if (!wordToCheck) {
+          resultPara.textContent = "נא להזין מילה לבדיקה.";
+          resultPara.style.color = "black";
+          return;
+        }
+
+        const exists = words.some(w => w.english.toLowerCase() === wordToCheck);
+
+        if (exists) {
+          resultPara.textContent = "המילה שמורה.";
+          resultPara.style.color = "green";
+        } else {
+          resultPara.textContent = "המילה אינה שמורה.";
+          resultPara.style.color = "red";
+        }
+      }
+    });
+  }
+});
