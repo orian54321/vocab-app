@@ -7,28 +7,53 @@
 </head>
 <body>
   <h1>מילים שמורות</h1>
-  <div id="savedWordsContainer"></div>
+
+  <div id="saved-words"></div>
+
   <br>
   <button onclick="goBack()">חזרה להזנת מילים</button>
+  <button onclick="goToPractice()">מעבר לתרגול</button>
 
   <script>
+    function loadSavedWords() {
+      const container = document.getElementById("saved-words");
+      const words = JSON.parse(localStorage.getItem("words")) || [];
+
+      if (words.length === 0) {
+        container.innerHTML = "<p>אין מילים שמורות.</p>";
+        return;
+      }
+
+      words.forEach((word, index) => {
+        const div = document.createElement("div");
+        div.style.border = "1px solid #ccc";
+        div.style.padding = "10px";
+        div.style.margin = "10px";
+
+        div.innerHTML = `
+          <strong>אנגלית:</strong> ${word.english}<br>
+          <strong>עברית:</strong> ${word.hebrew}<br>
+          <strong>משפט:</strong> ${word.sentence}<br>
+          <button onclick="deleteWord(${index})">מחק מילה זו</button>
+        `;
+
+        container.appendChild(div);
+      });
+    }
+
+    function deleteWord(index) {
+      const words = JSON.parse(localStorage.getItem("words")) || [];
+      words.splice(index, 1);
+      localStorage.setItem("words", JSON.stringify(words));
+      location.reload(); // רענון העמוד כדי להציג את הרשימה המעודכנת
+    }
+
     function goBack() {
       window.location.href = "index.html";
     }
 
-    function loadSavedWords() {
-      const words = JSON.parse(localStorage.getItem("words")) || [];
-      if (words.length === 0) {
-        document.getElementById("savedWordsContainer").innerHTML = "<p>אין מילים שמורות עדיין.</p>";
-        return;
-      }
-
-      let html = "<table border='1' style='border-collapse: collapse;'><tr><th>אנגלית</th><th>עברית</th><th>משפט</th></tr>";
-      words.forEach(word => {
-        html += `<tr><td>${word.english}</td><td>${word.hebrew}</td><td>${word.sentence}</td></tr>`;
-      });
-      html += "</table>";
-      document.getElementById("savedWordsContainer").innerHTML = html;
+    function goToPractice() {
+      window.location.href = "practice.html";
     }
 
     window.onload = loadSavedWords;
