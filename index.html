@@ -2,27 +2,34 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>אפליקציית אוצר מילים</title>
+  <title>הזנת מילים</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
-  <div id="datetime"></div>
+  <h1>הזנת מילים באנגלית</h1>
 
-  <h1>אפליקציית אוצר מילים</h1>
+  <label>מילה באנגלית:</label>
+  <input type="text" id="englishWord"><br>
 
-  <button onclick="location.href='practice.html'">מעבר לתרגול</button>
-  <button onclick="location.href='saved.html'">מילים שמורות</button>
+  <label>תרגום לעברית:</label>
+  <input type="text" id="hebrewWord"><br>
 
-  <h2>הוספת מילה חדשה</h2>
-  <input id="englishWord" placeholder="מילה באנגלית">
-  <input id="hebrewTranslation" placeholder="תרגום לעברית">
-  <input id="exampleSentence" placeholder="משפט (לא חובה)">
+  <label>משפט דוגמה (לא חובה):</label>
+  <input type="text" id="exampleSentence"><br><br>
+
   <button onclick="addWord()">הוסף מילה</button>
+  <button onclick="goToPractice()">מעבר לתרגול</button>
+  <button onclick="goToSaved()">מעבר למילים שמורות</button>
 
-  <h3>בדוק אם מילה קיימת</h3>
-  <input id="checkWord" placeholder="בדוק מילה" onkeypress="checkIfEnter(event)">
-  <button onclick="checkIfExists()">בדוק</button>
-  <div id="checkResult"></div>
+  <h3>ייבוא מילים מקובץ Excel</h3>
+  <input type="file" id="excelFile">
+  <button onclick="importFromExcel()">ייבא קובץ</button>
+
+  <h3>בדיקה אם מילה קיימת במערכת</h3>
+  <input type="text" id="checkWord" placeholder="הכנס מילה לבדיקה">
+  <button onclick="checkIfWordExists()">בדוק</button>
+  <p id="checkResult" style="font-weight: bold;"></p>
 
   <script src="script.js"></script>
 </body>
