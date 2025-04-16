@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -12,80 +13,80 @@
   <button onclick="window.location.href='index.html'">חזרה לדף הראשי</button>
 
   <script>
-    function loadSavedWords() {
-      const container = document.getElementById("savedWordsContainer");
-      container.innerHTML = "";
+	function loadSavedWords() {
+  	const container = document.getElementById("savedWordsContainer");
+  	container.innerHTML = "";
 
-      let allSavedWords = [];
-      const numFolders = 30;
+  	let allSavedWords = [];
+  	const numFolders = 30;
 
-      for (let i = 1; i <= numFolders; i++) {
-        const folderKey = `savedWordsFolder${i}`;
-        const wordsJSON = localStorage.getItem(folderKey);
-        if (wordsJSON) {
-          const wordsArray = JSON.parse(wordsJSON);
-          allSavedWords = allSavedWords.concat(wordsArray.map(word => ({ ...word, folder: i })));
-        }
-      }
+  	for (let i = 1; i <= numFolders; i++) {
+    	const folderKey = `savedWordsFolder${i}`;
+    	const wordsJSON = localStorage.getItem(folderKey);
+    	if (wordsJSON) {
+      	const wordsArray = JSON.parse(wordsJSON);
+      	allSavedWords = allSavedWords.concat(wordsArray.map(word => ({ ...word, folder: i })));
+    	}
+  	}
 
-      if (allSavedWords.length === 0) {
-        container.innerHTML = "<p>לא נשמרו מילים.</p>";
-        return;
-      }
+  	if (allSavedWords.length === 0) {
+    	container.innerHTML = "<p>לא נשמרו מילים.</p>";
+    	return;
+  	}
 
-      allSavedWords.forEach((word, index) => {
-        const div = document.createElement("div");
-        div.className = "word-box";
-        div.innerHTML = `
-          <strong>אנגלית:</strong> ${word.english}<br>
-          <strong>עברית:</strong> ${word.hebrew}<br>
-          <strong>משפט:</strong> ${word.example}<br>
-          <div style="margin-top: 10px;">
-            <button onclick="speakWord('${word.english.replace(/'/g, "\\'")}')">🔊 שמע</button>
-            <button onclick="deleteWord(${index})">🗑️ מחק מילה זו</button>
-          </div>
-        `;
-        container.appendChild(div);
-      });
-    }
+  	allSavedWords.forEach((word, index) => {
+    	const div = document.createElement("div");
+    	div.className = "word-box";
+    	div.innerHTML = `
+      	<strong>אנגלית:</strong> ${word.english}<br>
+      	<strong>עברית:</strong> ${word.hebrew}<br>
+      	<strong>משפט:</strong> ${word.example}<br>
+      	<div style="margin-top: 10px;">
+        	<button onclick="speakWord('${word.english.replace(/'/g, "\\'")}')">🔊 שמע</button>
+        	<button onclick="deleteWord(${index})">🗑️ מחק מילה זו</button>
+      	</div>
+    	`;
+    	container.appendChild(div);
+  	});
+	}
 
-    function deleteWord(globalIndex) {
-      let allSavedWords = [];
-      const numFolders = 30;
+	function deleteWord(globalIndex) {
+  	let allSavedWords = [];
+  	const numFolders = 30;
 
-      for (let i = 1; i <= numFolders; i++) {
-        const folderKey = `savedWordsFolder${i}`;
-        const wordsJSON = localStorage.getItem(folderKey);
-        if (wordsJSON) {
-          const wordsArray = JSON.parse(wordsJSON);
-          allSavedWords = allSavedWords.concat(wordsArray.map(word => ({ ...word, folder: i })));
-        }
-      }
+  	for (let i = 1; i <= numFolders; i++) {
+    	const folderKey = `savedWordsFolder${i}`;
+    	const wordsJSON = localStorage.getItem(folderKey);
+    	if (wordsJSON) {
+      	const wordsArray = JSON.parse(wordsJSON);
+      	allSavedWords = allSavedWords.concat(wordsArray.map(word => ({ ...word, folder: i })));
+    	}
+  	}
 
-      const wordToDelete = allSavedWords[globalIndex];
-      if (!wordToDelete) return;
+  	const wordToDelete = allSavedWords[globalIndex];
+  	if (!wordToDelete) return;
 
-      const folderKey = `savedWordsFolder${wordToDelete.folder}`;
-      let folderWords = JSON.parse(localStorage.getItem(folderKey)) || [];
-      folderWords = folderWords.filter(word => word.english !== wordToDelete.english);
-      localStorage.setItem(folderKey, JSON.stringify(folderWords));
+  	const folderKey = `savedWordsFolder${wordToDelete.folder}`;
+  	let folderWords = JSON.parse(localStorage.getItem(folderKey)) || [];
+  	folderWords = folderWords.filter(word => word.english !== wordToDelete.english);
+  	localStorage.setItem(folderKey, JSON.stringify(folderWords));
 
-      loadSavedWords();
-    }
+  	loadSavedWords();
+	}
 
-    function speakWord(text) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "en-US";
-      utterance.rate = 1;
-      utterance.pitch = 1;
-      utterance.voice = speechSynthesis.getVoices().find(v => v.lang === "en-US" && v.name.includes("Female")) || null;
-      speechSynthesis.speak(utterance);
-    }
+	function speakWord(text) {
+  	const utterance = new SpeechSynthesisUtterance(text);
+  	utterance.lang = "en-US";
+  	utterance.rate = 1;
+  	utterance.pitch = 1;
+  	utterance.voice = speechSynthesis.getVoices().find(v => v.lang === "en-US" && v.name.includes("Female")) || null;
+  	speechSynthesis.speak(utterance);
+	}
 
-    window.onload = () => {
-      window.speechSynthesis.onvoiceschanged = () => {};
-      loadSavedWords();
-    };
+	window.onload = () => {
+  	window.speechSynthesis.onvoiceschanged = () => {};
+  	loadSavedWords();
+	};
   </script>
 </body>
 </html>
