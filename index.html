@@ -1,37 +1,26 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>לימוד אוצר מילים באנגלית</title>
+  <title>אפליקציית לימוד מילים</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>לימוד אוצר מילים באנגלית</h1>
+  <h1>הזנת מילים באנגלית</h1>
 
-  <!-- טופס להזנת מילה אחת -->
-  <section id="input-section">
-    <h2>הזנת מילה</h2>
-    <label>מילה באנגלית:</label><br>
-    <input type="text" id="english-word"><br><br>
+  <div class="input-section">
+    <label>מילה באנגלית:</label>
+    <input type="text" id="englishWord"><br>
 
-    <label>תרגום לעברית:</label><br>
-    <input type="text" id="hebrew-word"><br><br>
+    <label>מילה בעברית:</label>
+    <input type="text" id="hebrewWord"><br>
 
-    <label>משפט דוגמה באנגלית (לא חובה):</label><br>
-    <input type="text" id="example-sentence"><br><br>
+    <label>משפט דוגמה (אופציונלי):</label>
+    <input type="text" id="exampleSentence"><br>
 
-    <button onclick="saveWord()">שמור מילה</button>
-  </section>
-
-  <!-- תרגול מילים -->
-  <section id="quiz-section" style="display: none;">
-    <h2 id="quiz-title">תרגול</h2>
-    <div id="quiz-word"></div>
-    <div id="quiz-options"></div>
-    <div id="quiz-sentence"></div>
-    <button onclick="playAudio()">🔊 שמע את המילה</button>
-    <button onclick="saveToFolder()">⭐ שמור מילה</button>
-  </section>
+    <button onclick="addWord()">הכנס</button>
+    <button onclick="goToPractice()">מעבר לתרגול</button>
+  </div>
 
   <script src="script.js"></script>
 </body>
