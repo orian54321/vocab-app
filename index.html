@@ -26,8 +26,11 @@
   <input type="file" id="excelFile">
   <button onclick="importFromExcel()">ייבא קובץ</button>
 
+  <br><br> <!-- רווח בין ייבוא לבין הבדיקה -->
+
   <h3>בדיקה אם מילה קיימת במערכת</h3>
   <input type="text" id="checkWord" placeholder="הכנס מילה לבדיקה">
+  <button onclick="checkIfWordExists()">בדוק</button>
   <p id="checkResult" style="font-weight: bold;"></p>
 
   <script src="script.js"></script>
