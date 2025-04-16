@@ -11,11 +11,7 @@ function addWord() {
 
   const example = sentence || `This is a sentence with the word ${english}.`;
 
-  const wordData = {
-    english,
-    hebrew,
-    sentence: example
-  };
+  const wordData = { english, hebrew, sentence: example };
 
   let words = JSON.parse(localStorage.getItem("words")) || [];
   words.push(wordData);
@@ -27,22 +23,20 @@ function addWord() {
   document.getElementById("exampleSentence").value = "";
 }
 
-// מעבר למסך התרגול
+// --- מעבר בין מסכים ---
 function goToPractice() {
   window.location.href = "practice.html";
 }
 
-// מעבר למסך מילים שמורות
 function goToSaved() {
   window.location.href = "saved.html";
 }
 
-// חזרה למסך הראשי
 function goBack() {
   window.location.href = "index.html";
 }
 
-// --- פונקציות תרגול ---
+// --- תרגול ---
 let currentWord = null;
 let remainingWords = [];
 
@@ -109,7 +103,34 @@ function nextWord() {
   showNextWord();
 }
 
-// טוען את התרגול רק במסך practice
+// --- קריאת המילה באנגלית ---
+function speakWord() {
+  if (!currentWord) return;
+
+  const utterance = new SpeechSynthesisUtterance(currentWord.english);
+  utterance.lang = "en-US";
+  utterance.pitch = 1; // גובה קול רגיל
+  utterance.rate = 1;  // קצב דיבור רגיל
+
+  // בחירת קול נשי אם קיים
+  const voices = speechSynthesis.getVoices();
+  const femaleVoice = voices.find(voice =>
+    voice.lang.startsWith("en") &&
+    voice.name.toLowerCase().includes("female") || voice.name.toLowerCase().includes("woman")
+  );
+  if (femaleVoice) {
+    utterance.voice = femaleVoice;
+  }
+
+  speechSynthesis.speak(utterance);
+}
+
+// --- טעינה אוטומטית במסך התרגול ---
 if (window.location.pathname.includes("practice.html")) {
-  window.onload = loadPractice;
+  window.onload = () => {
+    // יש לדחות טעינת קולות עד שיהיו זמינים
+    window.speechSynthesis.onvoiceschanged = () => {
+      loadPractice();
+    };
+  };
 }
