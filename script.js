@@ -11,7 +11,11 @@ function addWord() {
 
   const example = sentence || `This is a sentence with the word ${english}.`;
 
-  const wordData = { english, hebrew, sentence: example };
+  const wordData = {
+    english,
+    hebrew,
+    sentence: example
+  };
 
   let words = JSON.parse(localStorage.getItem("words")) || [];
   words.push(wordData);
@@ -103,21 +107,19 @@ function nextWord() {
   showNextWord();
 }
 
-// --- קריאת המילה באנגלית ---
+// --- הגיית מילה ---
 function speakWord() {
   if (!currentWord) return;
 
   const utterance = new SpeechSynthesisUtterance(currentWord.english);
   utterance.lang = "en-US";
-  utterance.pitch = 1; // גובה קול רגיל
-  utterance.rate = 1;  // קצב דיבור רגיל
+  utterance.rate = 1;
+  utterance.pitch = 1.3;
 
-  // בחירת קול נשי אם קיים
-  const voices = speechSynthesis.getVoices();
-  const femaleVoice = voices.find(voice =>
-    voice.lang.startsWith("en") &&
-    voice.name.toLowerCase().includes("female") || voice.name.toLowerCase().includes("woman")
+  const femaleVoice = speechSynthesis.getVoices().find(voice =>
+    voice.lang === "en-US" && voice.name.toLowerCase().includes("female")
   );
+
   if (femaleVoice) {
     utterance.voice = femaleVoice;
   }
@@ -125,12 +127,23 @@ function speakWord() {
   speechSynthesis.speak(utterance);
 }
 
-// --- טעינה אוטומטית במסך התרגול ---
+// --- שמירת מילה ---
+function saveCurrentWord() {
+  if (!currentWord) return;
+
+  let savedWords = JSON.parse(localStorage.getItem("savedWords")) || [];
+
+  const alreadySaved = savedWords.some(w => w.english === currentWord.english && w.hebrew === currentWord.hebrew);
+  if (!alreadySaved) {
+    savedWords.push(currentWord);
+    localStorage.setItem("savedWords", JSON.stringify(savedWords));
+    alert("המילה נשמרה!");
+  } else {
+    alert("המילה כבר שמורה.");
+  }
+}
+
+// --- התחלת תרגול ---
 if (window.location.pathname.includes("practice.html")) {
-  window.onload = () => {
-    // יש לדחות טעינת קולות עד שיהיו זמינים
-    window.speechSynthesis.onvoiceschanged = () => {
-      loadPractice();
-    };
-  };
+  window.onload = loadPractice;
 }
