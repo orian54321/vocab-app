@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8">
+  <title>לימוד אוצר מילים באנגלית</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>לימוד אוצר מילים באנגלית</h1>
+
+  <!-- טופס להזנת מילים -->
+  <section id="input-section">
+    <h2>הזנת מילים</h2>
+    <textarea id="words-input" placeholder="הכנס מילים בפורמט: מילה באנגלית - פירוש בעברית - משפט דוגמה... שורה לכל מילה"></textarea>
+    <button onclick="saveWords()">שמור מילים</button>
+  </section>
+
+  <!-- תרגול מילים -->
+  <section id="quiz-section" style="display: none;">
+    <h2 id="quiz-title">תרגול</h2>
+    <div id="quiz-word"></div>
+    <div id="quiz-options"></div>
+    <div id="quiz-sentence"></div>
+    <button onclick="playAudio()">🔊 שמע את המילה</button>
+    <button onclick="saveWord()">⭐ שמור מילה</button>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
