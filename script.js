@@ -1,25 +1,27 @@
-// --- פונקציה להוספת מילה חדשה ---
+// --- שמירה מקומית ---
+function saveToLocalStorage(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function loadFromLocalStorage(key) {
+  return JSON.parse(localStorage.getItem(key)) || [];
+}
+
+// --- הוספת מילה ---
 function addWord() {
   const english = document.getElementById("englishWord").value.trim();
   const hebrew = document.getElementById("hebrewWord").value.trim();
   const sentence = document.getElementById("exampleSentence").value.trim();
-
   if (!english || !hebrew) {
     alert("יש למלא גם מילה באנגלית וגם בעברית");
     return;
   }
-
   const example = sentence || `This is a sentence with the word ${english}.`;
 
-  const wordData = {
-    english,
-    hebrew,
-    sentence: example
-  };
-
-  let words = JSON.parse(localStorage.getItem("words")) || [];
+  const wordData = { english, hebrew, sentence: example };
+  const words = loadFromLocalStorage("words");
   words.push(wordData);
-  localStorage.setItem("words", JSON.stringify(words));
+  saveToLocalStorage("words", words);
 
   alert("המילה נוספה בהצלחה!");
   document.getElementById("englishWord").value = "";
@@ -27,26 +29,29 @@ function addWord() {
   document.getElementById("exampleSentence").value = "";
 }
 
+// מעבר לדפים
 function goToPractice() {
   window.location.href = "practice.html";
+}
+
+function goToSaved() {
+  window.location.href = "saved.html";
 }
 
 function goBack() {
   window.location.href = "index.html";
 }
 
-// --- פונקציות תרגול ---
+// תרגול מילים
 let currentWord = null;
 let remainingWords = [];
 
 function loadPractice() {
-  const allWords = JSON.parse(localStorage.getItem("words")) || [];
-
+  const allWords = loadFromLocalStorage("words");
   if (allWords.length === 0) {
-    document.getElementById("practice-container").innerHTML = "<p>אין מילים לתרגול. חזור להזנה.</p>";
+    document.getElementById("practice-container").innerHTML = "<p>אין מילים לתרגול.</p>";
     return;
   }
-
   remainingWords = [...allWords];
   showNextWord();
 }
@@ -82,7 +87,7 @@ function showNextWord() {
 }
 
 function generateChoices(correctWord) {
-  const allWords = JSON.parse(localStorage.getItem("words")) || [];
+  const allWords = loadFromLocalStorage("words");
   const incorrect = allWords.filter(w => w.hebrew !== correctWord.hebrew);
   let shuffled = incorrect.sort(() => 0.5 - Math.random()).slice(0, 3);
   shuffled.push(correctWord);
@@ -102,36 +107,65 @@ function nextWord() {
   showNextWord();
 }
 
-// --- פונקציה לשמירת מילה בתיקייה ---
-function saveCurrentWord() {
-  if (!currentWord) return;
+// --- מילים שמורות ---
+function saveWord(word) {
+  const saved = loadFromLocalStorage("savedWords");
+  saved.push(word);
+  saveToLocalStorage("savedWords", saved);
+  alert("המילה נוספה לתקיית מילים שמורות");
+}
 
-  let savedFolders = JSON.parse(localStorage.getItem("savedFolders")) || {};
-  let folderIndex = 1;
+function loadSavedWords() {
+  const savedWords = loadFromLocalStorage("savedWords");
+  const folders = document.getElementById("folders");
+  folders.innerHTML = "";
 
-  // חיפוש תיקייה פנויה (שיש בה פחות מ-50 מילים)
-  while (savedFolders[`folder${folderIndex}`] && savedFolders[`folder${folderIndex}`].length >= 50) {
-    folderIndex++;
-  }
-
-  const folderKey = `folder${folderIndex}`;
-  if (!savedFolders[folderKey]) {
-    savedFolders[folderKey] = [];
-  }
-
-  // בדיקה אם המילה כבר שמורה
-  const isAlreadySaved = savedFolders[folderKey].some(w => w.english === currentWord.english);
-  if (isAlreadySaved) {
-    alert("המילה כבר שמורה בתיקייה הזו.");
+  if (savedWords.length === 0) {
+    folders.innerHTML = "<p>אין מילים שמורות</p>";
     return;
   }
 
-  savedFolders[folderKey].push(currentWord);
-  localStorage.setItem("savedFolders", JSON.stringify(savedFolders));
-  alert(`המילה נשמרה בתיקייה: מילים שמורות ${folderIndex}`);
+  const chunks = [];
+  for (let i = 0; i < savedWords.length; i += 50) {
+    chunks.push(savedWords.slice(i, i + 50));
+  }
+
+  chunks.forEach((chunk, index) => {
+    const folderDiv = document.createElement("div");
+    folderDiv.style.border = "1px solid gray";
+    folderDiv.style.margin = "10px";
+    folderDiv.style.padding = "10px";
+
+    const title = document.createElement("h2");
+    title.innerText = `מילים שמורות ${index + 1}`;
+    folderDiv.appendChild(title);
+
+    chunk.forEach((word, i) => {
+      const wordDiv = document.createElement("div");
+      wordDiv.innerHTML = `
+        <input type="checkbox" id="check-${index}-${i}">
+        <b>${word.english}</b> - ${word.hebrew}
+        <button onclick="removeSavedWord(${(index * 50) + i})">מחק</button>
+      `;
+      folderDiv.appendChild(wordDiv);
+    });
+
+    folders.appendChild(folderDiv);
+  });
 }
 
-// טוען את התרגול רק במסך practice
+function removeSavedWord(globalIndex) {
+  const saved = loadFromLocalStorage("savedWords");
+  saved.splice(globalIndex, 1);
+  saveToLocalStorage("savedWords", saved);
+  alert("המילה הוסרה");
+  location.reload();
+}
+
+// טעינה לפי עמוד
 if (window.location.pathname.includes("practice.html")) {
   window.onload = loadPractice;
+}
+if (window.location.pathname.includes("saved.html")) {
+  window.onload = loadSavedWords;
 }
