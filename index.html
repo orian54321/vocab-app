@@ -2,25 +2,24 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>אפליקציית לימוד מילים</title>
+  <title>הזנת מילים</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>הזנת מילים באנגלית</h1>
+  <h1>הזנת מילים לאוצר מילים</h1>
 
-  <div class="input-section">
-    <label>מילה באנגלית:</label>
-    <input type="text" id="englishWord"><br>
+  <label for="englishWord">מילה באנגלית:</label><br>
+  <input type="text" id="englishWord"><br><br>
 
-    <label>מילה בעברית:</label>
-    <input type="text" id="hebrewWord"><br>
+  <label for="hebrewWord">תרגום לעברית:</label><br>
+  <input type="text" id="hebrewWord"><br><br>
 
-    <label>משפט דוגמה (אופציונלי):</label>
-    <input type="text" id="exampleSentence"><br>
+  <label for="exampleSentence">משפט לדוגמה (לא חובה):</label><br>
+  <input type="text" id="exampleSentence"><br><br>
 
-    <button onclick="addWord()">הכנס</button>
-    <button onclick="goToPractice()">מעבר לתרגול</button>
-  </div>
+  <button onclick="addWord()">הוסף מילה</button>
+  <button onclick="goToPractice()">מעבר לתרגול</button>
+  <button onclick="goToSaved()">מילים שמורות</button>
 
   <script src="script.js"></script>
 </body>
