@@ -1,4 +1,3 @@
-
 let words = JSON.parse(localStorage.getItem("words")) || [];
 let currentWord = null;
 
@@ -8,12 +7,12 @@ function addWord() {
   let example = document.getElementById("exampleSentence").value.trim();
 
   if (!english || !hebrew) {
-	alert("נא למלא את שני השדות: מילה באנגלית ותרגום לעברית.");
-	return;
+    alert("נא למלא את שני השדות: מילה באנגלית ותרגום לעברית.");
+    return;
   }
 
   if (!example) {
-	example = I like the word "${english}" in a sentence.;
+    example = `I like the word "${english}" in a sentence.`;
   }
 
   const newWord = { english, hebrew, example };
@@ -30,31 +29,31 @@ function importFromExcel() {
   const fileInput = document.getElementById('excelFile');
   const file = fileInput.files[0];
   if (!file) {
-	alert("בחר קובץ Excel תחילה.");
-	return;
+    alert("בחר קובץ Excel תחילה.");
+    return;
   }
 
   const reader = new FileReader();
   reader.onload = function (e) {
-	const data = new Uint8Array(e.target.result);
-	const workbook = XLSX.read(data, { type: 'array' });
-	const sheet = workbook.Sheets[workbook.SheetNames[0]];
-	const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: 'array' });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-	for (let i = 1; i < rows.length; i++) {
-  	const [english, hebrew, example] = rows[i];
-  	if (english && hebrew) {
-    	words.push({
-      	english: english.trim(),
-      	hebrew: hebrew.trim(),
-      	example: example ? example.trim() : I like the word "${english}" in a sentence.
-    	});
-  	}
-	}
+    for (let i = 1; i < rows.length; i++) {
+      const [english, hebrew, example] = rows[i];
+      if (english && hebrew) {
+        words.push({
+          english: english.trim(),
+          hebrew: hebrew.trim(),
+          example: example ? example.trim() : `I like the word "${english}" in a sentence.`
+        });
+      }
+    }
 
-	localStorage.setItem("words", JSON.stringify(words));
-	alert("הייבוא הסתיים בהצלחה!");
-	fileInput.value = "";
+    localStorage.setItem("words", JSON.stringify(words));
+    alert("הייבוא הסתיים בהצלחה!");
+    fileInput.value = "";
   };
 
   reader.readAsArrayBuffer(file);
@@ -80,8 +79,8 @@ function checkIfWordExists() {
 
 function loadPracticeWords() {
   if (words.length === 0) {
-	document.getElementById("practice-container").innerHTML = "<p>אין מילים לתרגול.</p>";
-	return;
+    document.getElementById("practice-container").innerHTML = "<p>אין מילים לתרגול.</p>";
+    return;
   }
 
   const randomIndex = Math.floor(Math.random() * words.length);
@@ -91,23 +90,24 @@ function loadPracticeWords() {
 
   const choices = [currentWord.hebrew];
   while (choices.length < 4 && words.length > 1) {
-	const randomChoice = words[Math.floor(Math.random() * words.length)].hebrew;
-	if (!choices.includes(randomChoice)) {
-  	choices.push(randomChoice);
-	}
+    const randomChoice = words[Math.floor(Math.random() * words.length)].hebrew;
+    if (!choices.includes(randomChoice)) {
+      choices.push(randomChoice);
+    }
   }
 
   shuffleArray(choices);
   const choicesDiv = document.getElementById("choices");
   choicesDiv.innerHTML = "";
   choices.forEach(choice => {
-	const btn = document.createElement("button");
-	btn.textContent = choice;
-	btn.onclick = () => checkAnswer(choice);
-	choicesDiv.appendChild(btn);
+    const btn = document.createElement("button");
+    btn.textContent = choice;
+    btn.onclick = () => checkAnswer(choice);
+    choicesDiv.appendChild(btn);
   });
 
-  document.getElementById("example-sentence").textContent = currentWord.example.replace(new RegExp(currentWord.english, "gi"), "_____");
+  document.getElementById("example-sentence").textContent =
+    currentWord.example.replace(new RegExp(currentWord.english, "gi"), "_____");
   document.getElementById("feedback").textContent = "";
   document.getElementById("nextBtn").style.display = "none";
 }
@@ -115,9 +115,9 @@ function loadPracticeWords() {
 function checkAnswer(selected) {
   const feedback = document.getElementById("feedback");
   if (selected === currentWord.hebrew) {
-	feedback.textContent = "נכון! ✅";
+    feedback.textContent = "נכון! ✅";
   } else {
-	feedback.textContent = שגוי. התשובה הנכונה היא: ${currentWord.hebrew};
+    feedback.textContent = `שגוי. התשובה הנכונה היא: ${currentWord.hebrew}`;
   }
   document.getElementById("nextBtn").style.display = "inline-block";
 }
@@ -130,20 +130,20 @@ function saveCurrentWord() {
   if (!currentWord) return;
 
   for (let i = 1; i <= 30; i++) {
-	const key = savedWordsFolder${i};
-	let folder = JSON.parse(localStorage.getItem(key)) || [];
+    const key = `savedWordsFolder${i}`;
+    let folder = JSON.parse(localStorage.getItem(key)) || [];
 
-	if (folder.some(w => w.english === currentWord.english)) {
-  	alert("המילה כבר קיימת ברשימת מילים שמורות.");
-  	return;
-	}
+    if (folder.some(w => w.english === currentWord.english)) {
+      alert("המילה כבר קיימת ברשימת מילים שמורות.");
+      return;
+    }
 
-	if (folder.length < 50) {
-  	folder.push(currentWord);
-  	localStorage.setItem(key, JSON.stringify(folder));
-  	alert("המילה נוספה לתיקייה שמורה.");
-  	return;
-	}
+    if (folder.length < 50) {
+      folder.push(currentWord);
+      localStorage.setItem(key, JSON.stringify(folder));
+      alert("המילה נוספה לתיקייה שמורה.");
+      return;
+    }
   }
 
   alert("כל התיקיות מלאות (30 תיקיות של 50 מילים).");
@@ -162,7 +162,7 @@ function speakWord() {
 
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
-	const j = Math.floor(Math.random() * (i + 1));
-	[array[i], array[j]] = [array[j], array[i]];
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
   }
 }
