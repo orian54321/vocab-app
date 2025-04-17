@@ -1,38 +1,40 @@
 <!DOCTYPE html>
-<html lang="he">
+<html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>אפליקציית לימוד מילים</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>אפליקציית אוצר מילים</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <h1>אפליקציית לימוד מילים</h1>
+  <div id="clock" class="clock"></div>
 
-  <label for="englishWord">מילה באנגלית:</label>
-  <input type="text" id="englishWord" />
-  <br />
-  <label for="hebrewWord">תרגום לעברית:</label>
-  <input type="text" id="hebrewWord" />
-  <br />
-  <label for="exampleSentence">משפט לדוגמה (לא חובה):</label>
-  <input type="text" id="exampleSentence" />
-  <br />
-  <button onclick="addWord()">הוסף מילה</button>
-  <br /><br />
+  <h1>הוספת מילים</h1>
 
-  <input type="file" id="excelFile" accept=".xlsx" />
-  <button onclick="importFromExcel()">ייבוא מאקסל</button>
-  <br /><br />
+  <div class="input-group">
+    <label for="english">מילה באנגלית:</label>
+    <input type="text" id="english" onkeydown="checkIfExists(event)">
+  </div>
 
-  <label for="checkWord">בדוק אם מילה קיימת:</label>
-  <input type="text" id="checkWord" onkeydown="if(event.key==='Enter') checkIfWordExists()" />
-  <span id="checkResult"></span>
-  <br /><br />
+  <div class="input-group">
+    <label for="hebrew">תרגום לעברית:</label>
+    <input type="text" id="hebrew">
+  </div>
 
-  <button onclick="goToPractice()">מעבר לתרגול</button>
-  <button onclick="goToSaved()">מילים שמורות</button>
+  <div class="input-group">
+    <label for="sentence">משפט דוגמה (אופציונלי):</label>
+    <input type="text" id="sentence">
+  </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+  <div class="button-row">
+    <button onclick="addWord()">הוסף מילה</button>
+    <button onclick="goToPractice()">מעבר לתרגול</button>
+    <button onclick="goToSaved()">מילים שמורות</button>
+  </div>
+
+  <p id="existsMessage" style="color: red;"></p>
+  <p id="status"></p>
+
   <script src="script.js"></script>
 </body>
 </html>
