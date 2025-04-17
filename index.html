@@ -1,37 +1,38 @@
-
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he">
 <head>
-  <meta charset="UTF-8">
-  <title>הזנת מילים</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <meta charset="UTF-8" />
+  <title>אפליקציית לימוד מילים</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>הזנת מילים באנגלית</h1>
+  <h1>אפליקציית לימוד מילים</h1>
 
-  <label>מילה באנגלית:</label>
-  <input type="text" id="englishWord"><br>
-
-  <label>תרגום לעברית:</label>
-  <input type="text" id="hebrewWord"><br>
-
-  <label>משפט דוגמה (לא חובה):</label>
-  <input type="text" id="exampleSentence"><br><br>
-
+  <label for="englishWord">מילה באנגלית:</label>
+  <input type="text" id="englishWord" />
+  <br />
+  <label for="hebrewWord">תרגום לעברית:</label>
+  <input type="text" id="hebrewWord" />
+  <br />
+  <label for="exampleSentence">משפט לדוגמה (לא חובה):</label>
+  <input type="text" id="exampleSentence" />
+  <br />
   <button onclick="addWord()">הוסף מילה</button>
+  <br /><br />
+
+  <input type="file" id="excelFile" accept=".xlsx" />
+  <button onclick="importFromExcel()">ייבוא מאקסל</button>
+  <br /><br />
+
+  <label for="checkWord">בדוק אם מילה קיימת:</label>
+  <input type="text" id="checkWord" onkeydown="if(event.key==='Enter') checkIfWordExists()" />
+  <span id="checkResult"></span>
+  <br /><br />
+
   <button onclick="goToPractice()">מעבר לתרגול</button>
-  <button onclick="goToSaved()">מעבר למילים שמורות</button>
+  <button onclick="goToSaved()">מילים שמורות</button>
 
-  <h3>ייבוא מילים מקובץ Excel</h3>
-  <input type="file" id="excelFile">
-  <button onclick="importFromExcel()">ייבא קובץ</button>
-
-  <h3>בדיקה אם מילה קיימת במערכת</h3>
-  <input type="text" id="checkWord" placeholder="הכנס מילה לבדיקה">
-  <button onclick="checkIfWordExists()">בדוק</button>
-  <p id="checkResult" style="font-weight: bold;"></p>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
